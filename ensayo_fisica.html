@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ensayos PAES Física — Preuniversitario UV</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+:root{
+  --azul:#1a56db;--azul-c:#ebf0ff;--verde:#057a55;--verde-c:#e3fcef;
+  --rojo:#c81e1e;--rojo-c:#fde8e8;--ambar:#92400e;--ambar-c:#fef3c7;
+  --gris:#f8f9fa;--borde:#e2e8f0;--texto-s:#64748b;--negro:#0f172a;
+  --blanco:#ffffff;--r:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"IBM Plex Sans",sans-serif;background:var(--gris);color:var(--negro);min-height:100vh}
+.wrap{max-width:700px;margin:0 auto;padding:1.5rem 1rem 4rem}
+
+/* NAV */
+.nav{background:var(--negro);padding:14px 1rem;position:sticky;top:0;z-index:100}
+.nav-inner{max-width:700px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{color:white;font-size:14px;font-weight:600}
+.nav-logo span{color:#93b4d4;font-weight:400}
+.nav-tabs{display:flex;gap:4px}
+.tab{padding:6px 12px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;border:none;background:transparent;color:#93b4d4;transition:all .15s}
+.tab.active{background:#1e3a5f;color:white}
+.tab:hover:not(.active){background:#1e3a5f50;color:white}
+
+/* CARDS */
+.card{background:var(--blanco);border:1px solid var(--borde);border-radius:var(--r);padding:1.5rem;margin-bottom:1rem}
+.card-title{font-size:16px;font-weight:600;margin-bottom:4px}
+.card-sub{font-size:13px;color:var(--texto-s);margin-bottom:1rem}
+
+/* BADGE */
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.05em}
+.badge-azul{background:var(--azul-c);color:var(--azul)}
+.badge-verde{background:var(--verde-c);color:var(--verde)}
+.badge-ambar{background:var(--ambar-c);color:var(--ambar)}
+.badge-rojo{background:var(--rojo-c);color:var(--rojo)}
+
+/* HOME */
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.5rem}
+.mode-card{background:var(--blanco);border:1.5px solid var(--borde);border-radius:var(--r);padding:1.25rem;cursor:pointer;transition:all .15s;text-align:center}
+.mode-card:hover{border-color:var(--azul);background:var(--azul-c)}
+.mode-card.selected{border-color:var(--azul);background:var(--azul-c)}
+.mode-icon{font-size:28px;margin-bottom:8px}
+.mode-title{font-size:14px;font-weight:600;margin-bottom:2px}
+.mode-desc{font-size:11px;color:var(--texto-s)}
+
+.size-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1.5rem}
+.size-btn{background:var(--blanco);border:1.5px solid var(--borde);border-radius:8px;padding:12px 8px;cursor:pointer;text-align:center;transition:all .15s}
+.size-btn:hover{border-color:var(--azul);background:var(--azul-c)}
+.size-btn.selected{border-color:var(--azul);background:var(--azul-c)}
+.size-num{font-size:22px;font-weight:600;color:var(--azul)}
+.size-lbl{font-size:11px;color:var(--texto-s)}
+
+.tema-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1.5rem}
+.tema-btn{background:var(--blanco);border:1.5px solid var(--borde);border-radius:8px;padding:10px 12px;cursor:pointer;font-size:13px;text-align:left;transition:all .15s;display:flex;align-items:center;gap:8px}
+.tema-btn:hover{border-color:var(--azul);background:var(--azul-c)}
+.tema-btn.selected{border-color:var(--azul);background:var(--azul-c)}
+.tema-btn .ck{width:16px;height:16px;border-radius:4px;border:1.5px solid var(--borde);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px}
+.tema-btn.selected .ck{background:var(--azul);border-color:var(--azul);color:white}
+
+/* IDENTITY */
+.identity-wrap{text-align:center;padding:0.5rem 0 1rem}
+.identity-icon{width:56px;height:56px;background:var(--azul-c);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:26px}
+.skip-link{font-size:12px;color:var(--texto-s);cursor:pointer;text-decoration:underline;margin-top:8px;display:inline-block}
+
+/* INPUTS */
+input[type=text],input[type=tel]{width:100%;padding:12px 14px;font-size:16px;border:1.5px solid var(--borde);border-radius:var(--r);outline:none;font-family:inherit;transition:border-color .2s}
+input:focus{border-color:var(--azul)}
+.input-hint{font-size:11px;color:var(--texto-s);margin-top:4px}
+
+/* BUTTONS */
+.btn{width:100%;padding:13px;background:var(--azul);color:white;font-family:inherit;font-size:15px;font-weight:500;border:none;border-radius:var(--r);cursor:pointer;transition:opacity .2s,transform .1s}
+.btn:hover{opacity:.9}.btn:active{transform:scale(.98)}
+.btn-outline{background:transparent;color:var(--azul);border:1.5px solid var(--azul);margin-top:8px}
+.btn-outline:hover{background:var(--azul-c)}
+.btn-sm{width:auto;padding:8px 18px;font-size:13px}
+.btn-verde{background:var(--verde)}
+.btn-gris{background:var(--texto-s)}
+
+/* TIMER */
+.timer-bar{background:var(--negro);color:white;padding:10px 1rem;display:none;position:sticky;top:56px;z-index:99}
+.timer-inner{max-width:700px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.timer-nums{font-family:"IBM Plex Mono",monospace;font-size:22px;font-weight:500}
+.timer-nums.warning{color:#fca5a5}
+.timer-track{flex:1;height:4px;background:#374151;border-radius:2px;overflow:hidden}
+.timer-fill{height:100%;background:#3b82f6;border-radius:2px;transition:width .5s linear}
+.timer-fill.warning{background:#ef4444}
+.timer-info{font-size:12px;color:#9ca3af}
+
+/* PROGRESS */
+.prog-wrap{display:flex;align-items:center;gap:10px;margin-bottom:1.5rem}
+.prog-track{flex:1;height:5px;background:var(--borde);border-radius:4px;overflow:hidden}
+.prog-fill{height:100%;background:var(--azul);border-radius:4px;transition:width .4s}
+.prog-lbl{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--texto-s);white-space:nowrap}
+
+/* QUESTION */
+.q-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:6px}
+.q-num{font-size:12px;font-weight:600;color:var(--azul);text-transform:uppercase;letter-spacing:.06em}
+.q-tags{display:flex;gap:6px;flex-wrap:wrap}
+.q-text{font-size:16px;font-weight:500;line-height:1.55;margin-bottom:1rem}
+.q-formula{font-family:"IBM Plex Mono",monospace;font-size:14px;color:var(--azul);background:var(--azul-c);padding:8px 14px;border-radius:8px;display:inline-block;margin-bottom:1rem}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border:1.5px solid var(--borde);border-radius:var(--r);cursor:pointer;transition:all .15s;background:var(--blanco);-webkit-tap-highlight-color:transparent}
+.opt:hover{border-color:var(--azul);background:var(--azul-c)}
+.opt.sel{border-color:var(--azul);background:var(--azul-c)}
+.opt.disabled{pointer-events:none}
+.opt.correct{border-color:var(--verde);background:var(--verde-c)}
+.opt.wrong{border-color:var(--rojo);background:var(--rojo-c)}
+.opt.show-correct{border-color:var(--verde);background:var(--verde-c);opacity:.65}
+.opt-circle{width:28px;height:28px;min-width:28px;border-radius:50%;border:1.5px solid var(--borde);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--texto-s);transition:all .15s;margin-top:1px}
+.opt.sel .opt-circle{background:var(--azul);border-color:var(--azul);color:white}
+.opt.correct .opt-circle{background:var(--verde);border-color:var(--verde);color:white}
+.opt.wrong .opt-circle{background:var(--rojo);border-color:var(--rojo);color:white}
+.opt.show-correct .opt-circle{background:var(--verde);border-color:var(--verde);color:white}
+.opt-text{font-size:14px;line-height:1.45}
+.aviso{font-size:12px;color:var(--rojo);margin-top:8px;display:none}
+.nav-btns{display:flex;gap:8px;margin-top:1rem}
+
+/* FEEDBACK (modo estudio) */
+.fb-box{margin-top:12px;padding:12px 14px;border-radius:var(--r);font-size:13px;line-height:1.6;display:none}
+.fb-box.show{display:block}
+.fb-box.ok{background:var(--verde-c);color:#065f46;border-left:3px solid var(--verde)}
+.fb-box.bad{background:var(--rojo-c);color:#7f1d1d;border-left:3px solid var(--rojo)}
+.tip-box{margin-top:8px;padding:8px 12px;background:#fef9e7;border-left:3px solid #d48b00;border-radius:6px;font-size:12px;color:#92400e}
+
+/* RESULTADOS */
+.score-card{background:#1e3a5f;color:white;border-radius:var(--r);padding:1.5rem;text-align:center;margin-bottom:1rem}
+.score-lbl{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#93b4d4;margin-bottom:4px}
+.score-num{font-size:56px;font-weight:600;font-family:"IBM Plex Mono",monospace;line-height:1;margin-bottom:4px;color:#e8f1fb}
+.score-sub{font-size:13px;color:#93b4d4}
+
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1.25rem}
+.stat-box{background:var(--gris);border-radius:8px;padding:12px 8px;text-align:center}
+.stat-box .val{font-size:20px;font-weight:600}
+.stat-box .lbl{font-size:11px;color:var(--texto-s);margin-top:2px}
+
+/* REVIEW */
+.review-item{border:1px solid var(--borde);border-radius:var(--r);margin-bottom:8px;overflow:hidden}
+.review-h{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer}
+.review-h.ok{background:var(--verde-c)}
+.review-h.bad{background:var(--rojo-c)}
+.review-icon{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.review-icon.ok{background:var(--verde);color:white}
+.review-icon.bad{background:var(--rojo);color:white}
+.review-lbl{font-size:13px;font-weight:500;flex:1}
+.review-lbl.ok{color:#065f46}
+.review-lbl.bad{color:#7f1d1d}
+.review-body{padding:12px 14px;font-size:13px;line-height:1.6;color:var(--texto-s);border-top:1px solid var(--borde);display:none}
+.review-body.open{display:block}
+.review-el{font-size:12px;color:var(--rojo);margin-bottom:3px}
+.review-co{font-size:12px;color:var(--verde);margin-bottom:6px}
+.review-tip{margin-top:8px;padding:8px 10px;background:#fef9e7;border-left:3px solid #d48b00;border-radius:4px;font-size:12px;color:#92400e}
+
+/* TEMAS STATS */
+.tema-stat{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.tema-stat-name{font-size:13px;font-weight:500;min-width:140px}
+.tema-bar-wrap{flex:1;height:8px;background:var(--borde);border-radius:4px;overflow:hidden}
+.tema-bar{height:100%;border-radius:4px;transition:width .8s ease}
+.tema-pct{font-size:12px;font-weight:600;min-width:36px;text-align:right}
+
+/* HISTORIAL */
+.hist-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--borde);border-radius:var(--r);margin-bottom:8px;background:var(--blanco)}
+.hist-pct{font-size:24px;font-weight:600;min-width:56px;text-align:center;font-family:"IBM Plex Mono",monospace}
+.hist-info{flex:1}
+.hist-title{font-size:13px;font-weight:500}
+.hist-meta{font-size:11px;color:var(--texto-s);margin-top:2px}
+.hist-empty{text-align:center;padding:2rem;color:var(--texto-s);font-size:14px}
+
+/* SCREENS */
+.screen{display:none}
+.screen.active{display:block}
+
+/* SYNC */
+.sync-badge{text-align:center;font-size:12px;padding:6px 0;color:var(--texto-s);display:none}
+.sync-badge.show{display:block}
+
+/* MOBILE */
+@media(max-width:480px){
+  .mode-grid{grid-template-columns:1fr 1fr}
+  .size-grid{grid-template-columns:repeat(2,1fr)}
+  .tema-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<div class="nav">
+  <div class="nav-inner">
+    <div class="nav-logo">Física PAES <span>· Preuniversitario UV</span></div>
+    <div class="nav-tabs">
+      <button class="tab active" onclick="showSection('home')">Ensayo</button>
+      <button class="tab" onclick="showSection('historial')">Historial</button>
+    </div>
+  </div>
+</div>
+
+<!-- TIMER BAR -->
+<div class="timer-bar" id="timer-bar">
+  <div class="timer-inner">
+    <div>
+      <div class="timer-nums" id="timer-nums">00:00</div>
+      <div class="timer-info" id="timer-info">tiempo restante</div>
+    </div>
+    <div class="timer-track"><div class="timer-fill" id="timer-fill" style="width:100%"></div></div>
+    <button class="btn btn-sm" style="width:auto;background:#374151;padding:6px 14px;font-size:12px" onclick="pauseTimer()">⏸</button>
+  </div>
+</div>
+
+<div class="wrap">
+
+<!-- ═══════════════ HOME ═══════════════ -->
+<div id="screen-home" class="screen active">
+  <div style="text-align:center;margin-bottom:1.5rem;padding-top:.5rem">
+    <div class="badge badge-azul" style="margin-bottom:8px">Preuniversitario Solidario UV</div>
+    <h1 style="font-size:24px;font-weight:600;margin-bottom:4px">Ensayos PAES Física</h1>
+    <p style="font-size:13px;color:var(--texto-s)">98 preguntas · PAES reales + Preu UC · selección aleatoria</p>
+  </div>
+
+  <!-- MODO -->
+  <div class="card">
+    <div class="card-title">1. Elige el modo</div>
+    <div class="card-sub">¿Cómo quieres practicar?</div>
+    <div class="mode-grid">
+      <div class="mode-card selected" id="mode-ensayo" onclick="selMode('ensayo')">
+        <div class="mode-icon">⏱️</div>
+        <div class="mode-title">Ensayo cronometrado</div>
+        <div class="mode-desc">~2 min por pregunta · al finalizar ves el resultado</div>
+      </div>
+      <div class="mode-card" id="mode-estudio" onclick="selMode('estudio')">
+        <div class="mode-icon">📖</div>
+        <div class="mode-title">Modo estudio</div>
+        <div class="mode-desc">Sin tiempo · feedback inmediato por pregunta</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CANTIDAD -->
+  <div class="card">
+    <div class="card-title">2. Cantidad de preguntas</div>
+    <div class="card-sub">El tiempo se calcula automáticamente (2 min/pregunta)</div>
+    <div class="size-grid">
+      <div class="size-btn" id="sz-10" onclick="selSize(10)"><div class="size-num">10</div><div class="size-lbl">20 min</div></div>
+      <div class="size-btn selected" id="sz-18" onclick="selSize(18)"><div class="size-num">18</div><div class="size-lbl">36 min</div></div>
+      <div class="size-btn" id="sz-25" onclick="selSize(25)"><div class="size-num">25</div><div class="size-lbl">50 min</div></div>
+      <div class="size-btn" id="sz-40" onclick="selSize(40)"><div class="size-num">40</div><div class="size-lbl">80 min</div></div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <input type="number" id="custom-size" placeholder="Otro número..." min="5" max="92" style="flex:1;padding:10px 12px;font-size:14px;border:1.5px solid var(--borde);border-radius:8px;outline:none" oninput="selCustomSize(this.value)" onfocus="clearSizeSel()">
+      <div id="custom-time" style="font-size:12px;color:var(--texto-s);white-space:nowrap"></div>
+    </div>
+  </div>
+
+  <!-- TEMAS -->
+  <div class="card">
+    <div class="card-title">3. Temas a incluir</div>
+    <div class="card-sub">Deja todo marcado para ensayo completo</div>
+    <div class="tema-grid" id="tema-grid"></div>
+    <button class="btn btn-outline btn-sm" style="margin-top:4px" onclick="toggleAllTemas()">Seleccionar / deseleccionar todo</button>
+  </div>
+
+  <!-- IDENTIDAD -->
+  <div class="card">
+    <div class="card-title">4. Identificación (opcional)</div>
+    <div class="card-sub">Para guardar tu historial entre sesiones</div>
+    <input type="text" id="nombre-input" placeholder="Tu nombre o apodo..." style="margin-bottom:8px">
+    <p class="input-hint">Déjalo en blanco para responder de forma anónima.</p>
+  </div>
+
+  <button class="btn" onclick="startEnsayo()">Comenzar →</button>
+</div>
+
+<!-- ═══════════════ QUIZ ═══════════════ -->
+<div id="screen-quiz" class="screen">
+  <div class="prog-wrap" style="margin-top:.5rem">
+    <div class="prog-track"><div class="prog-fill" id="prog" style="width:0%"></div></div>
+    <div class="prog-lbl" id="prog-lbl">1 / 18</div>
+  </div>
+  <div class="card" id="q-card"></div>
+  <div class="aviso" id="aviso">Selecciona una opción para continuar.</div>
+  <div class="nav-btns" id="nav-btns"></div>
+</div>
+
+<!-- ═══════════════ RESULTADOS ═══════════════ -->
+<div id="screen-results" class="screen">
+  <div class="score-card">
+    <div class="score-lbl">Resultado</div>
+    <div class="score-num" id="res-pct">—</div>
+    <div class="score-sub" id="res-sub">—</div>
+  </div>
+
+  <div class="card">
+    <div class="stats-grid">
+      <div class="stat-box"><div class="val" id="st-c" style="color:var(--verde)">0</div><div class="lbl">Correctas</div></div>
+      <div class="stat-box"><div class="val" id="st-i" style="color:var(--rojo)">0</div><div class="lbl">Incorrectas</div></div>
+      <div class="stat-box"><div class="val" id="st-t" style="color:var(--azul)">0/0</div><div class="lbl">Puntaje</div></div>
+    </div>
+    <div class="sync-badge" id="sync-badge"></div>
+  </div>
+
+  <!-- STATS POR TEMA -->
+  <div class="card">
+    <div class="card-title" style="margin-bottom:1rem">Desempeño por tema</div>
+    <div id="tema-stats"></div>
+  </div>
+
+  <!-- REVISIÓN -->
+  <div class="card">
+    <div class="card-title" style="margin-bottom:1rem">Revisión pregunta a pregunta</div>
+    <div id="review-items"></div>
+  </div>
+
+  <div style="display:flex;gap:8px;margin-top:4px">
+    <button class="btn btn-verde" onclick="descargarPDF()">Descargar PDF</button>
+    <button class="btn btn-outline" onclick="nuevoEnsayo()">Nuevo ensayo</button>
+  </div>
+</div>
+
+<!-- ═══════════════ HISTORIAL ═══════════════ -->
+<div id="screen-historial" class="screen">
+  <div style="margin-bottom:1.5rem;padding-top:.5rem">
+    <h2 style="font-size:20px;font-weight:600;margin-bottom:4px">Historial de ensayos</h2>
+    <p style="font-size:13px;color:var(--texto-s)">Guardado localmente en este dispositivo</p>
+  </div>
+  <div id="hist-list"></div>
+  <button class="btn btn-outline" style="margin-top:8px" onclick="clearHistorial()">Borrar historial</button>
+</div>
+
+</div><!-- /wrap -->
+
+<script>
+// ════════════════════════════════════════════════════
+// BANCO DE PREGUNTAS
+// ════════════════════════════════════════════════════
+const BANCO = [{"id": "MC01", "tema": "Método Científico", "subtema": "Variables experimentales", "dificultad": "F", "enunciado": "En un experimento se estudia cómo la altura de caída afecta el tiempo que demora una pelota en llegar al suelo. Se usa siempre la misma pelota y el mismo lugar. ¿Cuál es la variable dependiente?", "formula": null, "opciones": ["La altura de caída", "El tiempo de caída", "La masa de la pelota", "La aceleración de gravedad"], "correcta": 1, "explicacion": "La variable dependiente es lo que se mide como respuesta al cambio. Aquí se mide el tiempo de caída en respuesta a la altura.", "tip": "Independiente = lo que manipulo (altura). Dependiente = lo que mido (tiempo). Controlada = lo que mantengo fijo (pelota, lugar).", "fuente": ""}, {"id": "MC02", "tema": "Método Científico", "subtema": "Variables experimentales", "dificultad": "M", "enunciado": "Un grupo de estudiantes desea investigar si la amplitud inicial de un resorte afecta la rapidez de propagación de ondas generadas en él. Mantienen constante la frecuencia de oscilación y usan siempre el mismo resorte. ¿Cuál es la variable independiente?", "formula": null, "opciones": ["Rapidez de propagación", "Amplitud inicial", "Frecuencia de oscilación", "Longitud del resorte"], "correcta": 1, "explicacion": "La variable independiente es la que el investigador manipula deliberadamente: la amplitud inicial. La rapidez es la dependiente y la frecuencia es controlada.", "tip": "La variable que cambia deliberadamente = independiente. La que se mide en respuesta = dependiente. Las que se fijan = controladas.", "fuente": "Preuniversitario UC"}, {"id": "MC03", "tema": "Método Científico", "subtema": "Hipótesis, teoría y ley", "dificultad": "F", "enunciado": "¿Cuál de las siguientes afirmaciones describe correctamente la diferencia entre una teoría científica y una ley científica?", "formula": null, "opciones": ["Una teoría se convierte en ley si se prueba suficientemente", "La ley explica el por qué; la teoría describe el qué", "La ley describe qué ocurre; la teoría explica por qué ocurre", "Las teorías son menos confiables que las leyes"], "correcta": 2, "explicacion": "La ley describe un patrón (qué ocurre, frecuentemente en forma matemática); la teoría explica el mecanismo (por qué ocurre). No hay jerarquía entre ellas.", "tip": "Trampa clásica PAES: las teorías NO se convierten en leyes. Son cosas distintas con propósitos distintos.", "fuente": ""}, {"id": "MC04", "tema": "Método Científico", "subtema": "Gráficos experimentales", "dificultad": "F", "enunciado": "Un gráfico de velocidad vs. tiempo muestra una línea recta que pasa por el origen. ¿Qué relación describe entre las variables?", "formula": null, "opciones": ["Proporcional inversa", "Sin relación matemática", "Proporcional directa", "Cuadrática"], "correcta": 2, "explicacion": "Una línea recta que pasa por el origen indica proporcionalidad directa: y = kx. Cuando x duplica, y también duplica.", "tip": "Recta por el origen → proporcional directa. Hipérbola → proporcional inversa. Parábola → cuadrática.", "fuente": ""}, {"id": "MC05", "tema": "Método Científico", "subtema": "Notación científica", "dificultad": "F", "enunciado": "La velocidad de la luz en el vacío es 300.000.000 m/s. En notación científica correcta es:", "formula": null, "opciones": ["3,0 × 10⁶ m/s", "3,0 × 10⁸ m/s", "30 × 10⁷ m/s", "0,3 × 10⁹ m/s"], "correcta": 1, "explicacion": "300.000.000 = 3,0 × 10⁸. Se mueve la coma 8 lugares a la izquierda para obtener un coeficiente entre 1 y 10.", "tip": "El coeficiente siempre debe estar entre 1 y 10. 30 × 10⁷ y 0,3 × 10⁹ son incorrectos aunque numéricamente iguales.", "fuente": ""}, {"id": "MC06", "tema": "Método Científico", "subtema": "Notación científica", "dificultad": "F", "enunciado": "¿Cuál es la representación correcta de 0,0000456 en notación científica?", "formula": null, "opciones": ["4,56 × 10⁻⁵", "4,56 × 10⁵", "45,6 × 10⁻⁶", "0,456 × 10⁻⁴"], "correcta": 0, "explicacion": "Se mueve la coma 5 lugares a la derecha para obtener 4,56. Como el número original era menor que 1, el exponente es negativo: 4,56 × 10⁻⁵.", "tip": "Número menor que 1 → exponente negativo. Número mayor que 10 → exponente positivo.", "fuente": ""}, {"id": "MC07", "tema": "Método Científico", "subtema": "Gráficos experimentales", "dificultad": "M", "enunciado": "Al graficar la presión de un gas versus su volumen a temperatura constante se obtiene una hipérbola. Esto indica que:", "formula": null, "opciones": ["Presión y volumen son directamente proporcionales", "Presión y volumen son inversamente proporcionales", "No existe relación entre presión y volumen", "La relación es cuadrática"], "correcta": 1, "explicacion": "Una hipérbola en el gráfico y vs. x indica relación inversamente proporcional: P = k/V (Ley de Boyle).", "tip": "Hipérbola → proporcional inversa: cuando uno sube, el otro baja en la misma proporción.", "fuente": "PAES 2023"}, {"id": "MC08", "tema": "Método Científico", "subtema": "Variables experimentales", "dificultad": "M", "enunciado": "Un investigador quiere comprobar si la rapidez del sonido depende del medio de propagación. Genera ondas de igual frecuencia en cuerdas de diferente densidad sometidas a la misma tensión, mide la longitud de onda y calcula la rapidez. ¿Cuál es la variable independiente?", "formula": null, "opciones": ["La rapidez de propagación", "La frecuencia de la onda", "La densidad de la cuerda", "La longitud de onda"], "correcta": 2, "explicacion": "La densidad de la cuerda es la que se varía deliberadamente. La rapidez es la variable dependiente que se mide.", "tip": "Para identificar la variable independiente, pregúntate: '¿qué cambia el investigador a propósito?' Eso es la independiente.", "fuente": "PAES 2023"}, {"id": "MC09", "tema": "Método Científico", "subtema": "Conversión de unidades", "dificultad": "F", "enunciado": "Un automóvil viaja a 108 km/h. ¿Cuánto es esto en m/s?", "formula": null, "opciones": ["10,8 m/s", "108 m/s", "30 m/s", "3,0 m/s"], "correcta": 2, "explicacion": "108 km/h ÷ 3,6 = 30 m/s. La conversión km/h → m/s siempre es dividir por 3,6.", "tip": "Truco: km/h → m/s = dividir por 3,6. m/s → km/h = multiplicar por 3,6.", "fuente": ""}, {"id": "MC10", "tema": "Método Científico", "subtema": "Hipótesis, teoría y ley", "dificultad": "M", "enunciado": "Un científico observa que ciertas bacterias mueren al exponerse a luz ultravioleta. Plantea: 'La radiación UV daña el ADN bacteriano impidiendo su reproducción'. ¿Qué tipo de enunciado es este?", "formula": null, "opciones": ["Una ley científica", "Una conclusión definitiva", "Una hipótesis", "Un resultado experimental"], "correcta": 2, "explicacion": "Es una hipótesis: explicación tentativa y comprobable de una observación. Puede modificarse con nuevos experimentos.", "tip": "Hipótesis = tentativa + comprobable + puede cambiar. No confundir con conclusión, que viene después de analizar datos.", "fuente": ""}, {"id": "MV01", "tema": "Magnitudes y Vectores", "subtema": "Escalares y vectores", "dificultad": "F", "enunciado": "¿Cuál de las siguientes es una magnitud vectorial?", "formula": null, "opciones": ["Temperatura", "Masa", "Velocidad", "Tiempo"], "correcta": 2, "explicacion": "La velocidad es vectorial: tiene módulo, dirección y sentido. Temperatura, masa y tiempo son escalares (solo valor + unidad).", "tip": "Vectoriales: fuerza, velocidad, aceleración, desplazamiento, campo eléctrico. Escalares: masa, temperatura, tiempo, energía, rapidez.", "fuente": ""}, {"id": "MV02", "tema": "Magnitudes y Vectores", "subtema": "Escalares y vectores", "dificultad": "F", "enunciado": "La rapidez y la velocidad se diferencian en que:", "formula": null, "opciones": ["La rapidez siempre es mayor que la velocidad", "La velocidad es escalar y la rapidez es vectorial", "La rapidez es escalar; la velocidad es vectorial e incluye dirección y sentido", "Son sinónimos en física"], "correcta": 2, "explicacion": "Rapidez (speed) = escalar, solo cuán rápido. Velocidad (velocity) = vectorial, incluye módulo, dirección y sentido.", "tip": "Error frecuente PAES: confundir rapidez con velocidad. La rapidez nunca es negativa; la velocidad puede serlo.", "fuente": ""}, {"id": "MV03", "tema": "Magnitudes y Vectores", "subtema": "Módulo de un vector", "dificultad": "F", "enunciado": "Un vector tiene componentes Ax = 6 m y Ay = 8 m. ¿Cuál es su módulo?", "formula": null, "opciones": ["14 m", "7 m", "10 m", "48 m"], "correcta": 2, "explicacion": "|A| = √(6² + 8²) = √(36 + 64) = √100 = 10 m. Triángulo pitagórico 6-8-10.", "tip": "Teorema de Pitágoras: |A| = √(Ax² + Ay²). Reconoce los triángulos famosos: 3-4-5, 5-12-13, 6-8-10.", "fuente": ""}, {"id": "MV04", "tema": "Magnitudes y Vectores", "subtema": "Sistema Internacional", "dificultad": "F", "enunciado": "¿Cuál de las siguientes es una unidad FUNDAMENTAL del Sistema Internacional (SI)?", "formula": null, "opciones": ["Newton (N)", "Joule (J)", "Kilogramo (kg)", "Watt (W)"], "correcta": 2, "explicacion": "El kilogramo es una de las 7 magnitudes fundamentales del SI. Newton, joule y watt son unidades derivadas.", "tip": "Las 7 fundamentales del SI: metro, kilogramo, segundo, ampere, kelvin, mol, candela. El newton NO es fundamental.", "fuente": ""}, {"id": "MV05", "tema": "Magnitudes y Vectores", "subtema": "Sistema Internacional", "dificultad": "M", "enunciado": "¿Cuál es la unidad del newton (N) expresada en magnitudes fundamentales del SI?", "formula": null, "opciones": ["kg·m/s", "kg·m/s²", "kg·m²/s²", "kg/m·s²"], "correcta": 1, "explicacion": "De F = ma: N = kg · m/s². El newton se define como la fuerza que da a 1 kg una aceleración de 1 m/s².", "tip": "N = kg·m/s². J = N·m = kg·m²/s². W = J/s = kg·m²/s³. Aprende estas equivalencias para PAES.", "fuente": ""}, {"id": "MV06", "tema": "Magnitudes y Vectores", "subtema": "Suma de vectores", "dificultad": "M", "enunciado": "El módulo de la suma de dos vectores es MÁXIMO cuando estos:", "formula": null, "opciones": ["Son antiparalelos (sentidos opuestos)", "Son perpendiculares", "Son paralelos y del mismo sentido", "Forman 120° entre sí"], "correcta": 2, "explicacion": "|A+B|_máx = |A|+|B| cuando son paralelos y del mismo sentido. Es la única situación donde la igualdad se cumple.", "tip": "Desigualdad triangular: |A+B| ≤ |A|+|B|. Igualdad solo cuando apuntan en la misma dirección.", "fuente": ""}, {"id": "MV07", "tema": "Magnitudes y Vectores", "subtema": "Producto escalar", "dificultad": "M", "enunciado": "Dos vectores A⃗ y B⃗ son perpendiculares entre sí y ambos tienen módulo distinto de cero. ¿Cuánto vale A⃗ · B⃗?", "formula": null, "opciones": ["El producto de sus módulos", "La suma de sus módulos", "Cero", "Depende de los módulos"], "correcta": 2, "explicacion": "A⃗ · B⃗ = |A||B|cos θ. Si son perpendiculares, θ = 90° y cos 90° = 0. Por tanto A⃗ · B⃗ = 0.", "tip": "El producto escalar es cero cuando los vectores son perpendiculares. Es la forma matemática de detectar perpendicularidad.", "fuente": ""}, {"id": "MV08", "tema": "Magnitudes y Vectores", "subtema": "Conversión de unidades", "dificultad": "F", "enunciado": "Un automóvil viaja a 72 km/h. ¿Cuánto es esto en m/s?", "formula": null, "opciones": ["7,2 m/s", "72 m/s", "20 m/s", "200 m/s"], "correcta": 2, "explicacion": "72 km/h × (1000 m / 1 km) × (1 h / 3600 s) = 72000/3600 = 20 m/s. O bien: 72 ÷ 3,6 = 20 m/s.", "tip": "Conversión directa: km/h ÷ 3,6 = m/s. Memoriza: 36 km/h = 10 m/s, 72 km/h = 20 m/s, 108 km/h = 30 m/s.", "fuente": ""}, {"id": "ON01", "tema": "Ondas", "subtema": "Concepto de onda", "dificultad": "F", "enunciado": "¿Qué sucede siempre con las partículas del medio material por el que se propaga una onda mecánica viajera?", "formula": null, "opciones": ["Viajan junto con la onda", "Permanecen inmóviles cuando pasa la onda", "Se deforman permanentemente", "Oscilan cuando pasa la onda"], "correcta": 3, "explicacion": "Las partículas del medio oscilan alrededor de su posición de equilibrio cuando pasa la onda, pero no se desplazan con ella.", "tip": "Clave: las partículas NO viajan. Si tiras una piedra al agua, las hojas flotantes suben y bajan pero no llegan a la orilla.", "fuente": "PAES 2023"}, {"id": "ON02", "tema": "Ondas", "subtema": "Clasificación", "dificultad": "F", "enunciado": "¿Qué característica distingue a una onda electromagnética de una mecánica?", "formula": null, "opciones": ["Su propagación en medios materiales únicamente", "La necesidad de un emisor para existir", "Su capacidad de propagarse en el vacío", "Su amplitud constante"], "correcta": 2, "explicacion": "Las ondas EM se propagan en el vacío. Las mecánicas necesitan medio material. Es la diferencia fundamental.", "tip": "EM (viajan en vacío): luz, radio, rayos X, microondas. Mecánicas (necesitan medio): sonido, ondas en cuerdas, sismos.", "fuente": "Preuniversitario UC"}, {"id": "ON03", "tema": "Ondas", "subtema": "Clasificación", "dificultad": "F", "enunciado": "¿Qué tipo de ondas se caracterizan por una dirección de vibración perpendicular a la dirección de propagación?", "formula": null, "opciones": ["Longitudinales", "Transversales", "Mecánicas", "Estacionarias"], "correcta": 1, "explicacion": "Transversal = vibración ⊥ propagación. Ejemplos: ondas EM, onda en cuerda. Longitudinal = vibración ∥ propagación. Ejemplo: sonido.", "tip": "Transversal: piensa en una cuerda agitada arriba-abajo mientras la onda avanza horizontalmente.", "fuente": "Preuniversitario UC"}, {"id": "ON04", "tema": "Ondas", "subtema": "Parámetros", "dificultad": "F", "enunciado": "En un perfil temporal de una onda se observa que completa 4 ciclos en 8 segundos. ¿Cuál es su frecuencia?", "formula": null, "opciones": ["0,25 Hz", "0,5 Hz", "2 Hz", "4 Hz"], "correcta": 1, "explicacion": "f = ciclos/tiempo = 4/8 = 0,5 Hz. O bien: T = 8/4 = 2 s, luego f = 1/T = 0,5 Hz.", "tip": "f = número de ciclos por segundo. T = tiempo por ciclo. Siempre: f = 1/T.", "fuente": "Preuniversitario UC"}, {"id": "ON05", "tema": "Ondas", "subtema": "Parámetros", "dificultad": "M", "enunciado": "Un estudiante luego de su clase de educación física nota que su corazón realiza 180 palpitaciones por minuto. ¿Cuál es su frecuencia cardíaca en Hz?", "formula": null, "opciones": ["18 Hz", "10 Hz", "6 Hz", "3 Hz"], "correcta": 3, "explicacion": "f = 180 palpitaciones / 60 s = 3 Hz. Hay que convertir a segundos porque el Hz es ciclos por segundo.", "tip": "¡Ojo con las unidades! La frecuencia en Hz = ciclos por SEGUNDO. 180/min → dividir por 60 para pasar a Hz.", "fuente": "Preuniversitario UC"}, {"id": "ON06", "tema": "Ondas", "subtema": "Ecuación v=λf", "dificultad": "F", "enunciado": "Una onda tiene frecuencia 500 Hz y rapidez 340 m/s en el aire. ¿Cuál es su longitud de onda?", "formula": "v = λ · f", "opciones": ["0,68 m", "1,47 m", "170.000 m", "0,00147 m"], "correcta": 0, "explicacion": "λ = v/f = 340/500 = 0,68 m.", "tip": "v = λf → λ = v/f. Siempre despeja antes de sustituir. Verifica unidades: m/s ÷ Hz = m.", "fuente": ""}, {"id": "ON07", "tema": "Ondas", "subtema": "Ecuación v=λf", "dificultad": "M", "enunciado": "Una onda se propaga con rapidez V, longitud de onda λ y período T. Si pasa a otro medio donde su rapidez es 2V, ¿cuáles son su nueva longitud de onda y período?", "formula": null, "opciones": ["2λ y T", "2λ y 2T", "λ y 2T", "λ/2 y T"], "correcta": 0, "explicacion": "Al cambiar de medio, la frecuencia f no cambia (la fija la fuente). T = 1/f tampoco cambia. Como v = λf y v duplica con f constante, λ también duplica.", "tip": "Regla de oro: al cambiar de medio, f y T no cambian. Solo v y λ cambian (proporcionalmente).", "fuente": "PAES 2023"}, {"id": "ON08", "tema": "Ondas", "subtema": "Fenómenos ondulatorios", "dificultad": "F", "enunciado": "¿Qué fenómeno ondulatorio explica que puedas escuchar una conversación al doblar una esquina sin ver directamente a quien habla?", "formula": null, "opciones": ["Reflexión", "Refracción", "Difracción", "Interferencia destructiva"], "correcta": 2, "explicacion": "La difracción permite que la onda sonora se expanda al rodear bordes u obstáculos. El sonido dobla la esquina.", "tip": "Difracción: la onda rodea obstáculos. Se nota más cuando λ es comparable al tamaño del obstáculo.", "fuente": ""}, {"id": "ON09", "tema": "Ondas", "subtema": "Fenómenos ondulatorios", "dificultad": "M", "enunciado": "Una onda luminosa disminuye su rapidez a la mitad al pasar del medio X al medio Y. ¿Cuál de las siguientes afirmaciones es correcta?", "formula": null, "opciones": ["Solo I: pasó de un medio con menor n a uno mayor", "Solo I y III: pasó a medio mayor n, y n_X es el doble de n_Y", "Solo I: pasó a medio de mayor índice de refracción", "Solo II: el medio X es más denso que el Y"], "correcta": 0, "explicacion": "Al frenar, entra a un medio con mayor índice de refracción n. Solo la afirmación I es correcta: pasó de menor n a mayor n.", "tip": "Mayor n → luz más lenta. Al frenar a la mitad: n_Y = 2·n_X. El medio X NO es más denso (eso dependería de la naturaleza del medio).", "fuente": "Preuniversitario UC"}, {"id": "ON10", "tema": "Ondas", "subtema": "Fenómenos ondulatorios", "dificultad": "M", "enunciado": "Dos ondas idénticas se superponen completamente en fase (crestas con crestas). El resultado es:", "formula": null, "opciones": ["Interferencia destructiva: amplitud cero", "Interferencia constructiva: amplitud doble", "Una onda con el doble de frecuencia", "Una onda con la misma amplitud que las originales"], "correcta": 1, "explicacion": "Interferencia constructiva: cuando las ondas están en fase, sus amplitudes se suman. Amplitud resultante = 2A.", "tip": "En fase → constructiva (suma). En contrafase (180°) → destructiva (cancelación). Principio de superposición.", "fuente": ""}, {"id": "ON11", "tema": "Ondas", "subtema": "Gráficos", "dificultad": "M", "enunciado": "En un gráfico desplazamiento (y) vs. posición (x) de una onda, ¿qué parámetro se lee directamente?", "formula": null, "opciones": ["El período T", "La frecuencia f", "La longitud de onda λ", "La velocidad v"], "correcta": 2, "explicacion": "En y vs. x se lee la longitud de onda λ (distancia cresta a cresta). En y vs. t se lee el período T.", "tip": "¡No confundir! y vs. x → lees λ (espacial). y vs. t → lees T (temporal). PAES pregunta esto frecuentemente.", "fuente": ""}, {"id": "ON12", "tema": "Ondas", "subtema": "Fenómenos ondulatorios", "dificultad": "D", "enunciado": "Una onda electromagnética pasa de un medio 1 a un medio 2. En el medio 1 tiene mayor longitud de onda y mayor rapidez que en el medio 2. ¿Cuál de las siguientes afirmaciones es correcta?", "formula": null, "opciones": ["El índice de refracción del medio 1 es mayor que el del medio 2", "El índice de refracción del medio 2 es mayor que el del medio 1", "Los índices son iguales porque la frecuencia no cambia", "No se puede determinar sin conocer la frecuencia"], "correcta": 1, "explicacion": "Mayor rapidez en medio 1 → menor índice de refracción en medio 1. n = c/v: mayor v → menor n. El medio 2 tiene mayor n.", "tip": "n = c/v: mayor velocidad = menor índice. Al pasar de medio 1 (rápido) a medio 2 (lento), la onda se 'frena' → medio 2 tiene mayor n.", "fuente": "Preuniversitario UC"}, {"id": "SO01", "tema": "Sonido", "subtema": "Naturaleza", "dificultad": "F", "enunciado": "¿Por qué en el espacio exterior los astronautas no pueden comunicarse directamente sin equipos?", "formula": null, "opciones": ["Porque hace mucho frío y el sonido se congela", "Porque el sonido no puede viajar en el vacío", "Porque la velocidad del sonido es demasiado baja", "Porque la presión es muy alta"], "correcta": 1, "explicacion": "El sonido es una onda mecánica longitudinal que necesita un medio material para propagarse. El espacio es vacío.", "tip": "El sonido NECESITA materia. La luz NO necesita materia. Por eso vemos el Sol pero no lo 'escuchamos'.", "fuente": ""}, {"id": "SO02", "tema": "Sonido", "subtema": "Rapidez", "dificultad": "F", "enunciado": "¿En cuál medio viaja más rápido el sonido?", "formula": null, "opciones": ["Aire a 0°C", "Agua a 20°C", "Acero", "Helio a 20°C"], "correcta": 2, "explicacion": "v(sólidos) > v(líquidos) > v(gases). Acero ≈ 5000 m/s >> agua ≈ 1500 m/s >> aire ≈ 340 m/s.", "tip": "Los sólidos son más rígidos → transmiten vibración más eficientemente → mayor velocidad del sonido.", "fuente": ""}, {"id": "SO03", "tema": "Sonido", "subtema": "Espectro sonoro", "dificultad": "F", "enunciado": "Un delfín emite sonidos de 150.000 Hz para orientarse. ¿Cómo se clasifica este sonido?", "formula": null, "opciones": ["Infrasonido (f < 20 Hz)", "Sonido audible (20 Hz - 20 kHz)", "Ultrasonido (f > 20.000 Hz)", "Onda electromagnética"], "correcta": 2, "explicacion": "Ultrasonido: f > 20.000 Hz. El rango audible humano es 20 Hz – 20 kHz. Los delfines usan ultrasonido para ecolocalización.", "tip": "Infra < 20 Hz. Audible: 20 Hz – 20 kHz. Ultra > 20 kHz. La clasificación es por frecuencia, no por volumen.", "fuente": ""}, {"id": "SO04", "tema": "Sonido", "subtema": "Características", "dificultad": "F", "enunciado": "¿Qué característica del sonido determina si lo percibimos como agudo o grave?", "formula": null, "opciones": ["La amplitud de la onda", "La frecuencia de la onda", "La velocidad de propagación", "El timbre"], "correcta": 1, "explicacion": "El tono (agudo/grave) está determinado por la frecuencia: mayor f → más agudo; menor f → más grave.", "tip": "Frecuencia → tono (agudo/grave). Amplitud → intensidad (fuerte/suave). Forma de onda → timbre (calidad).", "fuente": ""}, {"id": "SO05", "tema": "Sonido", "subtema": "Características", "dificultad": "F", "enunciado": "Un violín y una trompeta tocan la misma nota con el mismo volumen. ¿Qué permite distinguirlos?", "formula": null, "opciones": ["El tono, porque tienen distinta frecuencia", "La intensidad, porque uno es más fuerte", "El timbre, por la forma específica de su onda", "La rapidez, porque el sonido viaja distinto en cada instrumento"], "correcta": 2, "explicacion": "El timbre es la 'personalidad' del sonido: la mezcla específica de frecuencias armónicas de cada instrumento.", "tip": "Mismo tono (misma f) + mismo volumen (misma A) → lo que varía es el timbre (forma de la onda).", "fuente": ""}, {"id": "SO06", "tema": "Sonido", "subtema": "Decibeles", "dificultad": "M", "enunciado": "Si el nivel de intensidad sonora aumenta en 30 dB, ¿cuántas veces aumenta la intensidad física del sonido?", "formula": null, "opciones": ["3 veces", "30 veces", "100 veces", "1000 veces"], "correcta": 3, "explicacion": "Escala logarítmica: +10 dB → ×10 en intensidad. +30 dB = tres pasos de 10 → 10×10×10 = 1000 veces.", "tip": "+10 dB → ×10. +20 dB → ×100. +30 dB → ×1000. Cada 10 dB multiplica la intensidad por 10.", "fuente": ""}, {"id": "SO07", "tema": "Sonido", "subtema": "Efecto Doppler", "dificultad": "M", "enunciado": "Una ambulancia y un automóvil se encuentran en un camino recto. ¿En cuál situación el conductor del automóvil percibe la sirena con la MENOR frecuencia?", "formula": null, "opciones": ["La ambulancia se aleja con rapidez v; el conductor está en reposo", "El conductor se aleja con rapidez v/2; la ambulancia en reposo", "La ambulancia y el conductor se alejan entre sí con rapidez relativa v/2", "La ambulancia se acerca con rapidez v; el conductor en reposo"], "correcta": 0, "explicacion": "Cuando la fuente se aleja, la frecuencia percibida es menor. Con v relativa de alejamiento = v (opción A) la disminución es máxima entre las opciones que implican alejamiento.", "tip": "Alejamiento → menor frecuencia percibida (más grave). Acercamiento → mayor frecuencia (más agudo). La frecuencia real NO cambia.", "fuente": "PAES 2023"}, {"id": "SO08", "tema": "Sonido", "subtema": "Efecto Doppler", "dificultad": "M", "enunciado": "Las galaxias lejanas muestran un corrimiento al rojo (redshift) en sus espectros. ¿Qué indica esto sobre su movimiento?", "formula": null, "opciones": ["Las galaxias se acercan a nosotros", "Las galaxias se alejan de nosotros", "Las galaxias emiten solo luz roja", "La luz cambia de color al viajar largas distancias"], "correcta": 1, "explicacion": "Corrimiento al rojo = frecuencia percibida menor que la emitida → la fuente se aleja. Es el efecto Doppler para la luz.", "tip": "Redshift (rojo) = alejamiento = universo en expansión. Blueshift (azul) = acercamiento. El Big Bang predijo esto.", "fuente": ""}, {"id": "SO09", "tema": "Sonido", "subtema": "Resonancia", "dificultad": "F", "enunciado": "Una copa de cristal se rompe al escuchar cierta nota musical específica. ¿Qué fenómeno explica esto?", "formula": null, "opciones": ["Efecto Doppler", "Eco del sonido", "Resonancia", "Refracción del sonido"], "correcta": 2, "explicacion": "Resonancia: cuando la frecuencia de la nota coincide con la frecuencia natural de la copa, la amplitud de vibración crece hasta destruirla.", "tip": "Resonancia = coincidencia de frecuencias. La amplitud crece indefinidamente si no hay amortiguamiento. Ejemplo clásico.", "fuente": ""}, {"id": "SO10", "tema": "Sonido", "subtema": "Eco y reverberación", "dificultad": "F", "enunciado": "¿Cuál es la diferencia entre eco y reverberación?", "formula": null, "opciones": ["El eco ocurre en espacios cerrados; la reverberación en abiertos", "En el eco el sonido reflejado se percibe separado del original; en la reverberación los reflejos se fusionan con el sonido original", "El eco es más fuerte que la reverberación", "No hay diferencia, son sinónimos"], "correcta": 1, "explicacion": "Eco: sonido reflejado se percibe separado (superficie >17 m). Reverberación: múltiples reflejos superpuestos en espacio cerrado.", "tip": "Eco: necesita distancia (>17 m) para distinguir el rebote. Reverberación: sala de conciertos, catedral, cueva.", "fuente": ""}, {"id": "LU01", "tema": "Luz", "subtema": "Naturaleza", "dificultad": "F", "enunciado": "¿En qué se diferencia fundamentalmente la luz del sonido en cuanto a su propagación?", "formula": null, "opciones": ["La luz es más lenta que el sonido en el aire", "La luz puede propagarse en el vacío; el sonido no", "El sonido es transversal; la luz es longitudinal", "Ambas necesitan medio material"], "correcta": 1, "explicacion": "Luz = onda EM transversal, no necesita medio. Sonido = onda mecánica longitudinal, necesita medio material.", "tip": "Luz viaja en vacío a c = 3×10⁸ m/s. Sonido en aire ≈ 340 m/s pero NO puede viajar en vacío.", "fuente": ""}, {"id": "LU02", "tema": "Luz", "subtema": "Índice de refracción", "dificultad": "M", "enunciado": "La luz viaja en el vacío a c = 3×10⁸ m/s. En un vidrio con n = 1,5, ¿a qué velocidad viaja?", "formula": "n = c/v", "opciones": ["4,5 × 10⁸ m/s", "3,0 × 10⁸ m/s", "2,0 × 10⁸ m/s", "1,5 × 10⁸ m/s"], "correcta": 2, "explicacion": "v = c/n = 3×10⁸/1,5 = 2,0×10⁸ m/s. Mayor n → la luz frena más.", "tip": "n = c/v → v = c/n. Mayor índice = mayor frenado = menor velocidad en el medio.", "fuente": ""}, {"id": "LU03", "tema": "Luz", "subtema": "Refracción", "dificultad": "M", "enunciado": "Un rayo de luz pasa del vacío a un material transparente con ángulo de incidencia θ (0° < θ < 90°). ¿Qué ocurre con el rayo?", "formula": null, "opciones": ["Se refleja con ángulo mayor que θ y se refracta con ángulo mayor que θ", "Se refleja con ángulo mayor que θ y se refracta con ángulo menor que θ", "Se refleja con ángulo igual a θ y se refracta con ángulo menor que θ", "Se refleja con ángulo igual a θ y se refracta con ángulo igual a θ"], "correcta": 2, "explicacion": "Ley de reflexión: ángulo reflejado = ángulo incidente (siempre). Al entrar a un medio más denso (mayor n), el rayo se acerca a la normal: ángulo refractado < ángulo incidente.", "tip": "Reflexión: θ_r = θ_i siempre. Refracción al entrar a medio más denso: θ_2 < θ_1 (se acerca a la normal).", "fuente": "PAES 2025"}, {"id": "LU04", "tema": "Luz", "subtema": "Espectro EM", "dificultad": "F", "enunciado": "¿Cuál de las siguientes ondas del espectro EM tiene MAYOR energía por fotón?", "formula": null, "opciones": ["Ondas de radio", "Luz infrarroja", "Luz visible", "Rayos gamma"], "correcta": 3, "explicacion": "E = hf: mayor frecuencia → mayor energía. Rayos gamma tienen la mayor frecuencia del espectro EM.", "tip": "Orden de menor a mayor frecuencia (y energía): radio < microondas < IR < visible < UV < rayos X < rayos γ.", "fuente": ""}, {"id": "LU05", "tema": "Luz", "subtema": "Espectro EM", "dificultad": "F", "enunciado": "Todas las ondas electromagnéticas en el vacío:", "formula": null, "opciones": ["Viajan a distintas velocidades según su frecuencia", "Viajan todas a la misma velocidad c = 3×10⁸ m/s", "Solo la luz visible viaja a c", "Viajan más lento que en cualquier medio material"], "correcta": 1, "explicacion": "Todas las ondas EM viajan a c en el vacío, independientemente de su frecuencia. Lo que varía entre ellas es λ y la energía del fotón.", "tip": "c es constante universal para toda onda EM en el vacío. Solo cuando entran a un medio material sus velocidades difieren.", "fuente": ""}, {"id": "LU06", "tema": "Luz", "subtema": "Color", "dificultad": "F", "enunciado": "Una persona limpia un piso de baldosas y nota que la parte mojada parece más oscura. ¿Qué pregunta de investigación surge directamente de esta observación?", "formula": null, "opciones": ["¿Cuáles longitudes de onda se reflejan en las baldosas?", "¿Cuáles longitudes de onda son absorbidas por el agua?", "¿Cuáles longitudes de onda se refractan en las baldosas?", "¿Cuáles longitudes de onda inciden en el agua?"], "correcta": 0, "explicacion": "La parte mojada se ve más oscura porque el agua reduce la luz que se refleja hacia el observador. La pregunta directa es sobre qué longitudes de onda se reflejan.", "tip": "Parte mojada más oscura = menos luz reflejada. La pregunta de investigación apunta directamente al fenómeno observado: la reflexión.", "fuente": "PAES 2025"}, {"id": "LU07", "tema": "Luz", "subtema": "Color", "dificultad": "M", "enunciado": "Un objeto rojo es iluminado únicamente con luz verde. ¿Qué color se observa?", "formula": null, "opciones": ["Rojo", "Verde", "Amarillo", "Negro"], "correcta": 3, "explicacion": "El objeto rojo solo puede reflejar luz roja. Al iluminarlo con luz verde, no hay rojo que reflejar → absorbe toda la luz verde → se ve negro.", "tip": "Pregunta trampa clásica PAES. El objeto solo puede reflejar el color para el que está 'sintonizado'. Sin ese color en la iluminación, se ve negro.", "fuente": "PAES 2025"}, {"id": "LU08", "tema": "Luz", "subtema": "Dispersión", "dificultad": "M", "enunciado": "Al pasar luz blanca por un prisma, el color que se desvía MÁS es:", "formula": null, "opciones": ["Rojo", "Naranja", "Azul", "Violeta"], "correcta": 3, "explicacion": "Violeta tiene mayor f → mayor n en el prisma → mayor desviación. Rojo tiene menor f → menor desviación.", "tip": "En la dispersión: mayor frecuencia → mayor índice de refracción → mayor desviación. Arcoíris: rojo afuera, violeta adentro.", "fuente": ""}, {"id": "LU09", "tema": "Luz", "subtema": "Espectro EM", "dificultad": "M", "enunciado": "Cierto insecto puede ver en la región infrarroja del espectro EM. Por lo tanto, es correcto afirmar que:", "formula": null, "opciones": ["Este insecto puede ver longitudes de onda más pequeñas que los humanos", "Los rayos X son de más baja frecuencia que las ondas que puede ver este insecto", "Los humanos pueden ver ondas de frecuencia más baja que las de este insecto", "Las microondas son de mayor longitud de onda que las que puede ver este insecto"], "correcta": 3, "explicacion": "IR tiene mayor λ que la luz visible. Microondas tiene mayor λ que IR. Por tanto, las microondas tienen mayor λ que lo que el insecto puede ver.", "tip": "Orden de mayor a menor λ: radio > microondas > IR > visible > UV > rayos X > γ. Si el insecto ve IR, las microondas tienen mayor λ.", "fuente": "Preuniversitario UC"}, {"id": "LU10", "tema": "Luz", "subtema": "Dualidad", "dificultad": "M", "enunciado": "¿Qué fenómeno demuestra el comportamiento corpuscular (de partícula) de la luz?", "formula": null, "opciones": ["La difracción", "La interferencia en doble rendija", "El efecto fotoeléctrico", "La refracción"], "correcta": 2, "explicacion": "El efecto fotoeléctrico demostró que la luz se comporta como fotones con energía E = hf. La interferencia y difracción demuestran comportamiento ondulatorio.", "tip": "Onda → interferencia, difracción, refracción. Partícula → efecto fotoeléctrico. La luz tiene dualidad onda-partícula.", "fuente": "Preuniversitario UC"}, {"id": "LU11", "tema": "Luz", "subtema": "Fenómenos ondulatorios", "dificultad": "M", "enunciado": "Un grupo de estudiantes hace incidir dos rayos luminosos distintos con el mismo ángulo de incidencia sobre agua y observa que se refractan con ángulos distintos. ¿Qué pregunta de investigación surge directamente?", "formula": null, "opciones": ["¿Cómo influye el ángulo de incidencia en el ángulo de reflexión?", "¿Cómo influyen los medios de transmisión en el ángulo refractado?", "¿Qué relación hay entre la frecuencia del rayo y el ángulo de reflexión?", "¿Qué relación hay entre la frecuencia del rayo y el ángulo de refracción?"], "correcta": 3, "explicacion": "Los rayos difieren entre sí, y lo que los diferencia es su frecuencia (color). Si con el mismo ángulo de incidencia se refractan distinto, la variable relevante es la frecuencia.", "tip": "La pregunta de investigación debe apuntar directamente a la variable que causa el fenómeno observado: la frecuencia del rayo.", "fuente": "PAES 2025"}, {"id": "LU12", "tema": "Luz", "subtema": "Índice de refracción", "dificultad": "M", "enunciado": "Una onda electromagnética pasa del vidrio (n=1,5) al aire (n=1). ¿Qué ocurre con su rapidez y longitud de onda?", "formula": null, "opciones": ["Aumenta su rapidez y aumenta su longitud de onda", "Aumenta su rapidez y disminuye su longitud de onda", "Disminuye su frecuencia y disminuye su rapidez", "Aumenta su frecuencia y disminuye su rapidez"], "correcta": 0, "explicacion": "Al pasar a menor n (aire), la luz se acelera: v = c/n → mayor v. Con f constante y v = λf, λ también aumenta.", "tip": "Al pasar a menor n: v sube → λ sube (f constante). Al pasar a mayor n: v baja → λ baja (f constante).", "fuente": "Preuniversitario UC"}, {"id": "OP01", "tema": "Óptica", "subtema": "Espejos planos", "dificultad": "F", "enunciado": "Un objeto está a 40 cm de un espejo plano. ¿A qué distancia detrás del espejo se forma la imagen?", "formula": null, "opciones": ["20 cm", "40 cm", "80 cm", "La imagen no se forma"], "correcta": 1, "explicacion": "En espejo plano: imagen y objeto están a igual distancia del espejo. Objeto a 40 cm → imagen a 40 cm detrás.", "tip": "Espejo plano: dᵢ = d₀. La imagen es siempre virtual, derecha e igual tamaño.", "fuente": ""}, {"id": "OP02", "tema": "Óptica", "subtema": "Espejos planos", "dificultad": "F", "enunciado": "La imagen formada por un espejo plano siempre es:", "formula": null, "opciones": ["Real, invertida y del mismo tamaño", "Virtual, derecha y del mismo tamaño", "Real, derecha y más pequeña", "Virtual, invertida y más grande"], "correcta": 1, "explicacion": "Espejo plano: imagen SIEMPRE virtual (detrás del espejo), derecha (no invertida) y del mismo tamaño que el objeto.", "tip": "Memoriza: VDI → Virtual, Derecha, Igual tamaño. Las tres propiedades del espejo plano.", "fuente": ""}, {"id": "OP03", "tema": "Óptica", "subtema": "Espejos curvos", "dificultad": "M", "enunciado": "Un profesor toma una fotografía de un objeto frente a un espejo cóncavo y observa que no se formó el reflejo del objeto. ¿En qué posición estaba el objeto?", "formula": null, "opciones": ["Entre el foco y el espejo (vértice)", "En el foco del espejo", "En el centro de curvatura", "Entre el foco y el centro de curvatura"], "correcta": 1, "explicacion": "Cuando el objeto está en el foco, los rayos reflejados salen paralelos y no convergen: no se forma imagen.", "tip": "Tabla espejo cóncavo: objeto EN el foco → no hay imagen (rayos paralelos, nunca convergen).", "fuente": "PAES 2025 invierno"}, {"id": "OP04", "tema": "Óptica", "subtema": "Espejos curvos", "dificultad": "M", "enunciado": "Una barra vertical se coloca perpendicular al eje óptico de un espejo cóncavo. Si su punto inferior está entre el centro C y el foco F (más cerca del foco), la imagen es:", "formula": null, "opciones": ["Real, derecha y más pequeña", "Virtual, invertida y más pequeña", "Virtual, derecha y más grande", "Real, invertida y más grande"], "correcta": 3, "explicacion": "Objeto entre C y F en espejo cóncavo → imagen real, invertida y más grande. Es el principio del proyector.", "tip": "Tabla espejo cóncavo: entre C y F → real, invertida, mayor. El más difícil de memorizar.", "fuente": "Preuniversitario UC"}, {"id": "OP05", "tema": "Óptica", "subtema": "Espejos curvos", "dificultad": "F", "enunciado": "Una persona se ubica en el foco de un espejo convexo. Su imagen es:", "formula": null, "opciones": ["Real, más grande e invertida", "Virtual, derecha y más lejos del espejo que la persona", "Real, invertida y más cerca del espejo", "Virtual, más pequeña y derecha"], "correcta": 3, "explicacion": "El espejo convexo SIEMPRE forma imágenes virtuales, derechas y menores, independientemente de la posición del objeto.", "tip": "Espejo convexo = siempre VDM (Virtual, Derecha, Menor). No importa dónde esté el objeto.", "fuente": "Preuniversitario UC"}, {"id": "OP06", "tema": "Óptica", "subtema": "Espejos curvos", "dificultad": "F", "enunciado": "¿Cuál es la relación entre la distancia focal f y el radio de curvatura R de un espejo esférico?", "formula": null, "opciones": ["f = R", "f = 2R", "f = R/2", "f = R²"], "correcta": 2, "explicacion": "f = R/2. La distancia focal es la mitad del radio de curvatura. Válido para espejos cóncavos y convexos.", "tip": "f = R/2 siempre. Si R = 30 cm → f = 15 cm. El foco está en el punto medio entre vértice y centro de curvatura.", "fuente": ""}, {"id": "OP07", "tema": "Óptica", "subtema": "Espejos curvos", "dificultad": "D", "enunciado": "Una persona camina sobre el eje de un espejo cóncavo alejándose del vértice y del centro de curvatura (o sea, está más allá de C y se aleja más). Su imagen:", "formula": null, "opciones": ["Es invertida y se acerca al centro del espejo", "Es invertida y se acerca al foco del espejo", "Es derecha y se acerca al vértice", "Es derecha y también se aleja del espejo"], "correcta": 1, "explicacion": "Objeto más allá de C alejándose → imagen real, invertida, entre F y C, y se acerca al foco a medida que el objeto se aleja.", "tip": "Cuando el objeto se aleja al infinito, la imagen converge al foco. La imagen siempre es invertida cuando está más allá de C.", "fuente": "Preuniversitario UC"}, {"id": "OP08", "tema": "Óptica", "subtema": "Lentes", "dificultad": "M", "enunciado": "Un recipiente de vidrio lleno de agua actúa como lente convergente. Una persona introduce su mano y la observa a través del recipiente: la imagen no está invertida y es mayor. ¿Dónde está la mano?", "formula": null, "opciones": ["Fuera de la distancia focal del sistema", "Dentro de la distancia focal del sistema (entre el foco y la lente)", "En el foco del sistema", "En el centro de curvatura"], "correcta": 1, "explicacion": "Lente convergente con objeto dentro del foco → imagen virtual, derecha y mayor (principio de la lupa).", "tip": "Lupa = lente convergente + objeto dentro del foco → imagen virtual, derecha, ampliada.", "fuente": "PAES 2025"}, {"id": "OP09", "tema": "Óptica", "subtema": "Lentes", "dificultad": "F", "enunciado": "Una lente divergente (bicóncava) siempre forma imágenes:", "formula": null, "opciones": ["Reales, invertidas y menores", "Virtuales, derechas y menores", "Reales, derechas y mayores", "Depende de la posición del objeto"], "correcta": 1, "explicacion": "La lente divergente SIEMPRE forma imágenes virtuales, derechas y menores, sin importar dónde esté el objeto.", "tip": "Lente divergente = siempre VDM. A diferencia de la convergente, no tiene casos especiales.", "fuente": ""}, {"id": "OP10", "tema": "Óptica", "subtema": "Lentes", "dificultad": "M", "enunciado": "Una onda electromagnética pasa del vidrio (n=1,5) al aire (n=1). ¿Cómo es el ángulo de refracción en relación con el ángulo de incidencia?", "formula": null, "opciones": ["El ángulo de refracción es menor que el de incidencia", "Son iguales", "El ángulo de refracción es mayor que el de incidencia", "No hay refracción"], "correcta": 2, "explicacion": "Al pasar de mayor n a menor n (de vidrio a aire), el rayo se aleja de la normal: ángulo de refracción > ángulo de incidencia.", "tip": "De denso a menos denso (mayor n a menor n): rayo se aleja de la normal → ángulo aumenta. De menos a más denso: se acerca.", "fuente": "Preuniversitario UC"}, {"id": "OP11", "tema": "Óptica", "subtema": "Fenómenos ondulatorios", "dificultad": "M", "enunciado": "En el experimento de la doble rendija de Young se observa un patrón de franjas brillantes y oscuras. Las franjas brillantes corresponden a:", "formula": null, "opciones": ["Interferencia destructiva donde las ondas se anulan", "Interferencia constructiva donde las ondas se refuerzan", "Reflexión total interna de la luz", "Difracción en los bordes de la rendija"], "correcta": 1, "explicacion": "Las franjas brillantes son zonas de interferencia constructiva: crestas coinciden con crestas y las amplitudes se suman.", "tip": "Doble rendija: brillante = constructiva (crestas+crestas). Oscura = destructiva (cresta+valle). Demuestra naturaleza ondulatoria de la luz.", "fuente": "Preuniversitario UC"}, {"id": "OP12", "tema": "Óptica", "subtema": "Espejos planos", "dificultad": "D", "enunciado": "Para estudiar la ley de la reflexión, un grupo usa un puntero láser y un espejo plano sumergido en agua. ¿Qué instrumento es indispensable para medir los ángulos?", "formula": null, "opciones": ["Un segundo espejo plano", "Un transportador", "Un cronómetro", "Una regla"], "correcta": 1, "explicacion": "Para verificar la ley de reflexión (θ_i = θ_r) se necesita medir ángulos. El transportador es el instrumento adecuado.", "tip": "Para medir ángulos se usa transportador. La regla mide distancias. El cronómetro mide tiempo.", "fuente": "PAES 2026"}, {"id": "ME01", "tema": "Mecánica", "subtema": "Primera ley de Newton", "dificultad": "F", "enunciado": "¿Cuál de las siguientes situaciones representa los dos estados inerciales posibles según la primera ley de Newton?", "formula": null, "opciones": ["Una esfera que cae por una rampa acelerando", "Un paracaidista que desciende a velocidad constante y luego se detiene al aterrizar", "Un piloto que acelera hasta velocidad máxima", "Una roca que cae libremente"], "correcta": 1, "explicacion": "Los dos estados inerciales son: reposo (detenido al aterrizar) y movimiento rectilíneo uniforme (velocidad constante al descender).", "tip": "Primera ley: si ΣF = 0, el objeto está en reposo O en MRU (velocidad constante). Esos son los dos estados inerciales.", "fuente": "Preuniversitario UC"}, {"id": "ME02", "tema": "Mecánica", "subtema": "Segunda ley de Newton", "dificultad": "F", "enunciado": "Una fuerza neta de 30 N actúa sobre un objeto de 6 kg. ¿Cuál es la aceleración?", "formula": "ΣF = m · a", "opciones": ["5 m/s²", "180 m/s²", "0,2 m/s²", "24 m/s²"], "correcta": 0, "explicacion": "a = ΣF/m = 30/6 = 5 m/s².", "tip": "ΣF = ma → a = ΣF/m. Verifica unidades: N/kg = kg·m/s²/kg = m/s².", "fuente": ""}, {"id": "ME03", "tema": "Mecánica", "subtema": "Segunda ley de Newton", "dificultad": "M", "enunciado": "Un niño arrastra un cajón de madera sobre una superficie horizontal plana con aceleración constante. ¿Cómo es la fuerza neta sobre el cajón mientras acelera?", "formula": null, "opciones": ["Nula, porque va a velocidad constante", "Igual a la fuerza de roce", "Constante y distinta de cero", "Aumenta progresivamente"], "correcta": 2, "explicacion": "Aceleración constante (≠0) → ΣF constante y distinta de cero (Segunda ley: ΣF = ma).", "tip": "a = cte ≠ 0 → ΣF = cte ≠ 0. No confundir: 'velocidad constante' implica a = 0 y ΣF = 0.", "fuente": "PAES 2024 invierno"}, {"id": "ME04", "tema": "Mecánica", "subtema": "Tercera ley de Newton", "dificultad": "F", "enunciado": "De acuerdo con las leyes de Newton, ¿cuál es una característica de las fuerzas de acción y reacción?", "formula": null, "opciones": ["Se aplican sobre el mismo cuerpo", "Se aplican en el mismo sentido", "Una se aplica antes que la otra", "Tienen igual magnitud"], "correcta": 3, "explicacion": "Acción y reacción: misma magnitud, misma dirección, sentidos opuestos, y actúan sobre CUERPOS DISTINTOS.", "tip": "Error clásico: 'se cancelan'. NO se cancelan porque actúan sobre cuerpos distintos. Solo fuerzas sobre el mismo cuerpo pueden cancelarse.", "fuente": "PAES 2024 invierno"}, {"id": "ME05", "tema": "Mecánica", "subtema": "Fuerza peso", "dificultad": "F", "enunciado": "¿Cuál es el peso de un objeto de 4 kg? (g = 10 m/s²)", "formula": "P = m · g", "opciones": ["4 N", "40 N", "400 N", "0,4 N"], "correcta": 1, "explicacion": "P = mg = 4 × 10 = 40 N. El peso es una fuerza (en N), no una masa (en kg).", "tip": "P = mg. En PAES siempre usa g = 10 m/s². La masa (kg) no cambia; el peso (N) depende de g del lugar.", "fuente": ""}, {"id": "ME06", "tema": "Mecánica", "subtema": "Fuerza de roce", "dificultad": "F", "enunciado": "Un bloque se mueve a velocidad constante sobre una superficie horizontal. La fuerza aplicada es 15 N. ¿Cuánto vale la fuerza de roce cinético?", "formula": null, "opciones": ["0 N", "7,5 N", "15 N", "30 N"], "correcta": 2, "explicacion": "Velocidad constante → ΣF = 0 → F_aplicada = f_roce. Por tanto f_roce = 15 N.", "tip": "Velocidad constante (o reposo) → ΣF = 0. La fuerza motriz iguala exactamente al roce.", "fuente": ""}, {"id": "ME07", "tema": "Mecánica", "subtema": "Fuerza de roce", "dificultad": "M", "enunciado": "Una persona mueve un mueble con fuerza F constante sobre una superficie sin roce, excepto sobre una alfombra donde la fuerza de roce es igual en magnitud a F. ¿Cómo es la aceleración durante todo el trayecto?", "formula": null, "opciones": ["De igual valor antes y después de la alfombra", "De menor valor después de la alfombra que antes", "Creciente en todo el trayecto, excepto en la alfombra donde es constante", "Creciente en todo el trayecto, excepto en la alfombra donde es decreciente"], "correcta": 1, "explicacion": "Fuera alfombra: ΣF = F → a = F/m (constante). Sobre alfombra: ΣF = F - F = 0 → a = 0 (menor que antes).", "tip": "Antes alfombra: a = F/m (positiva, constante). Sobre alfombra: a = 0. Después alfombra: a = F/m de nuevo. La aceleración ES menor sobre la alfombra.", "fuente": "PAES 2026"}, {"id": "ME08", "tema": "Mecánica", "subtema": "Ley de Hooke", "dificultad": "M", "enunciado": "Un resorte ideal mide 15 cm en su estado natural. Al colgarse un bloque de 3 kg alcanza 20 cm. Con g = 10 m/s², ¿cuál es la constante elástica?", "formula": null, "opciones": ["1,50 N/cm", "2,00 N/cm", "6,00 N/cm", "600 N/m"], "correcta": 3, "explicacion": "Deformación: x = 20-15 = 5 cm = 0,05 m. F = mg = 30 N. k = F/x = 30/0,05 = 600 N/m.", "tip": "¡Usa la DEFORMACIÓN (largo final - largo natural), NO la longitud total! Error clásico PAES.", "fuente": "PAES 2026"}, {"id": "ME09", "tema": "Mecánica", "subtema": "Ley de Hooke", "dificultad": "M", "enunciado": "Un ingeniero realiza un gráfico de peso vs. elongación de un cable de acero y obtiene una recta hasta cierto valor. ¿Qué representa la pendiente de esa recta?", "formula": null, "opciones": ["El límite elástico del cable", "La constante de elasticidad del cable", "El peso máximo que soporta el cable", "La elongación máxima del cable"], "correcta": 1, "explicacion": "En el gráfico F vs. x, la pendiente es k (constante elástica), según F = kx.", "tip": "Pendiente del gráfico F vs. x = constante elástica k. La recta se mantiene mientras estamos dentro del límite elástico.", "fuente": "PAES 2026"}, {"id": "ME10", "tema": "Mecánica", "subtema": "Planos inclinados", "dificultad": "M", "enunciado": "Un bloque de 4 kg reposa sobre un plano inclinado a 30°. ¿Cuál es la fuerza normal? (g = 10 m/s², cos30° = 0,87)", "formula": "N = m·g·cosθ", "opciones": ["40 N", "20 N", "34,7 N ≈ 35 N", "23,1 N"], "correcta": 2, "explicacion": "N = mgcos30° = 4×10×0,87 ≈ 34,7 N ≈ 35 N. La normal es menor que el peso en un plano inclinado.", "tip": "En plano inclinado: N = mgcosθ (⊥ al plano). P∥ = mgsinθ (∥ al plano, hacia abajo). g = 10 m/s².", "fuente": ""}, {"id": "ME11", "tema": "Mecánica", "subtema": "DCL", "dificultad": "F", "enunciado": "¿Qué fuerzas se incluyen en el Diagrama de Cuerpo Libre de un objeto?", "formula": null, "opciones": ["Todas las fuerzas del universo sobre todos los cuerpos", "Solo las fuerzas que actúan directamente sobre el cuerpo analizado", "Solo la fuerza de gravedad y la normal", "Las fuerzas que el cuerpo ejerce sobre otros"], "correcta": 1, "explicacion": "El DCL incluye SOLO las fuerzas que actúan sobre el cuerpo de interés, no las que ejerce sobre otros.", "tip": "Pasos DCL: 1) Aisla el cuerpo. 2) ¿Qué lo toca? → normal, tensión, roce. 3) Agrega peso. 4) Define ejes.", "fuente": ""}, {"id": "ME12", "tema": "Mecánica", "subtema": "Primera ley de Newton", "dificultad": "M", "enunciado": "Un mago saca rápidamente el mantel de una mesa sin que caigan los objetos sobre ella. ¿Qué principio físico explica esto?", "formula": null, "opciones": ["Segunda ley: los objetos aceleran con la fuerza del mantel", "Tercera ley: el mantel ejerce reacción sobre los objetos", "Primera ley: los objetos tienden a mantener su estado de reposo por inercia", "Ley de gravitación: la gravedad es más fuerte que el mantel"], "correcta": 2, "explicacion": "Los objetos sobre la mesa tienen inercia: tienden a permanecer en reposo. Si el mantel se retira rápidamente, la fuerza de roce dura muy poco tiempo y los objetos no se desplazan significativamente.", "tip": "Inercia = resistencia al cambio de movimiento. Mayor masa = mayor inercia. El truco funciona porque la interacción es brevísima.", "fuente": "Preuniversitario UC"}, {"id": "ME13", "tema": "Mecánica", "subtema": "Tercera ley de Newton", "dificultad": "M", "enunciado": "Al caminar, tu pie empuja el suelo hacia atrás. Por la tercera ley, el suelo empuja tu pie hacia adelante. ¿Por qué estas fuerzas no se cancelan?", "formula": null, "opciones": ["Porque actúan en distintas direcciones", "Porque tienen distinta magnitud", "Porque actúan sobre cuerpos distintos: una sobre el suelo y la otra sobre tu pie", "Porque actúan en momentos distintos"], "correcta": 2, "explicacion": "Para cancelarse, las fuerzas deben actuar sobre el MISMO cuerpo. Acción y reacción actúan sobre cuerpos distintos (pie y suelo), por eso no se cancelan.", "tip": "Error clásico: 'acción y reacción se cancelan'. NO: actúan en cuerpos distintos. Solo fuerzas sobre el MISMO cuerpo pueden cancelarse.", "fuente": "PAES 2024 invierno"}, {"id": "ME14", "tema": "Mecánica", "subtema": "Segunda ley de Newton", "dificultad": "D", "enunciado": "Una persona baja por un tobogán con aceleración constante. Su ropa aumenta de temperatura por contacto. ¿Cuál fuerza es directamente responsable del aumento de temperatura?", "formula": null, "opciones": ["La fuerza peso", "La fuerza normal", "La fuerza de roce", "La fuerza neta"], "correcta": 2, "explicacion": "La fuerza de roce convierte energía mecánica en calor. Es la fuerza que actúa entre la ropa y el tobogán, generando el aumento de temperatura.", "tip": "Roce = fricción = genera calor. Cuando dos superficies se rozan, la energía cinética se transforma en energía térmica.", "fuente": "PAES 2026"}, {"id": "EL01", "tema": "Electricidad", "subtema": "Corriente eléctrica", "dificultad": "F", "enunciado": "Por un conductor circulan 20 C de carga en 5 s. ¿Cuál es la corriente eléctrica?", "formula": "I = Q / t", "opciones": ["100 A", "4 A", "0,25 A", "25 A"], "correcta": 1, "explicacion": "I = Q/t = 20/5 = 4 A.", "tip": "I = Q/t. La corriente es la 'cantidad de carga por segundo'. Unidad: ampere (A).", "fuente": ""}, {"id": "EL02", "tema": "Electricidad", "subtema": "Ley de Ohm", "dificultad": "F", "enunciado": "Un resistor tiene 8 Ω y circula una corriente de 3 A. ¿Cuál es la caída de voltaje?", "formula": "V = I · R", "opciones": ["0,375 V", "11 V", "24 V", "2,67 V"], "correcta": 2, "explicacion": "V = IR = 3 × 8 = 24 V.", "tip": "V = IR (Ley de Ohm). Triángulo VIR: tapa la que buscas para saber la operación.", "fuente": ""}, {"id": "EL03", "tema": "Electricidad", "subtema": "Ley de Ohm", "dificultad": "F", "enunciado": "Si se duplica la resistencia con voltaje constante, la corriente:", "formula": null, "opciones": ["Se duplica", "Se mantiene igual", "Se reduce a la mitad", "Se cuadruplica"], "correcta": 2, "explicacion": "I = V/R. Con V constante, I es inversamente proporcional a R. Si R duplica → I se divide por 2.", "tip": "I ∝ 1/R (voltaje constante). Más resistencia → menos corriente. Como una válvula más cerrada.", "fuente": ""}, {"id": "EL04", "tema": "Electricidad", "subtema": "Circuito en serie", "dificultad": "M", "enunciado": "Tres resistencias de 5 Ω, 10 Ω y 15 Ω están en serie. ¿Cuál es la resistencia equivalente?", "formula": "Req = R₁ + R₂ + R₃", "opciones": ["3,0 Ω", "10 Ω", "30 Ω", "750 Ω"], "correcta": 2, "explicacion": "Req = R1 + R2 + R3 = 5 + 10 + 15 = 30 Ω. En serie las resistencias se suman directamente.", "tip": "Serie: Req = suma de todas. Req siempre es mayor que cualquier Ri individual.", "fuente": ""}, {"id": "EL05", "tema": "Electricidad", "subtema": "Circuito en paralelo", "dificultad": "M", "enunciado": "Dos resistencias de 12 Ω cada una están en paralelo. ¿Cuál es la resistencia equivalente?", "formula": null, "opciones": ["24 Ω", "12 Ω", "6 Ω", "8 Ω"], "correcta": 2, "explicacion": "Para n iguales: Req = R/n = 12/2 = 6 Ω. En paralelo la Req siempre es menor que cualquier resistencia individual.", "tip": "n iguales en paralelo: Req = R/n. En paralelo Req siempre es MENOR que la menor resistencia individual.", "fuente": ""}, {"id": "EL06", "tema": "Electricidad", "subtema": "Serie vs paralelo", "dificultad": "F", "enunciado": "Las luces navideñas antiguas se apagan todas cuando una ampolleta se quema. ¿Cómo están conectadas?", "formula": null, "opciones": ["En paralelo", "En serie", "En circuito mixto", "No importa la conexión"], "correcta": 1, "explicacion": "Serie: un solo camino para la corriente. Si falla un elemento, se interrumpe todo el circuito y todo se apaga.", "tip": "Serie = se apagan todas. Paralelo = las demás siguen funcionando. Los hogares modernos usan paralelo.", "fuente": ""}, {"id": "EL07", "tema": "Electricidad", "subtema": "Serie vs paralelo", "dificultad": "M", "enunciado": "Para comprobar que la red domiciliaria es un circuito en paralelo, ¿qué medición es suficiente?", "formula": null, "opciones": ["La lectura del medidor de la casa", "La diferencia de potencial en cada enchufe", "La corriente en cada artefacto", "La resistencia de los cables"], "correcta": 1, "explicacion": "En paralelo, el voltaje es igual en todas las ramas. Si todos los enchufes marcan el mismo voltaje (220 V), confirma que están en paralelo.", "tip": "Característica del paralelo: mismo voltaje en todas las ramas. Característica del serie: misma corriente en todo el circuito.", "fuente": "PAES 2026"}, {"id": "EL08", "tema": "Electricidad", "subtema": "Potencia", "dificultad": "F", "enunciado": "Un aparato opera a 220 V con corriente de 2 A. ¿Cuál es su potencia?", "formula": "P = V · I", "opciones": ["110 W", "440 W", "222 W", "2 W"], "correcta": 1, "explicacion": "P = VI = 220 × 2 = 440 W.", "tip": "P = VI = I²R = V²/R. Las tres formas son equivalentes mediante la Ley de Ohm.", "fuente": ""}, {"id": "EL09", "tema": "Electricidad", "subtema": "Energía eléctrica", "dificultad": "M", "enunciado": "Una persona investiga la eficiencia energética de ampolletas. Una LED emite el 50% de su consumo como luz visible, mientras una incandescente solo el 5%. ¿Cuál conclusión es correcta?", "formula": null, "opciones": ["El uso de LED permite mayor iluminación que la incandescente", "Una LED consume más que una incandescente de similar luminosidad", "Cambiar de incandescente a LED de similar luminosidad implica ahorro en consumo eléctrico", "Cambiar a LED de similar potencia implica ahorro a corto plazo"], "correcta": 2, "explicacion": "Para igual luminosidad, la LED necesita menos potencia (es más eficiente): menor consumo eléctrico.", "tip": "Mayor eficiencia = menos energía para la misma cantidad de luz. LED de igual luminosidad que una incandescente consume menos.", "fuente": "PAES 2026"}, {"id": "EL10", "tema": "Electricidad", "subtema": "Corriente eléctrica", "dificultad": "M", "enunciado": "Para que el flujo de cargas por unidad de tiempo en un circuito aumente, ¿qué acción es efectiva?", "formula": null, "opciones": ["Aumentar la resistencia del circuito", "Disminuir el número de pilas", "Aumentar la diferencia de potencial", "Disminuir el número de interruptores cerrados"], "correcta": 2, "explicacion": "I = V/R. Para aumentar la corriente (flujo de carga/tiempo), se puede aumentar V o disminuir R. Aumentar V (más pilas) es la opción correcta.", "tip": "Más voltaje → más corriente (proporcional). Más resistencia → menos corriente (inversamente proporcional).", "fuente": "PAES 2026"}, {"id": "TI01", "tema": "Energía y Tierra", "subtema": "Interior terrestre", "dificultad": "F", "enunciado": "¿Qué capa de la Tierra permite el movimiento de las placas tectónicas por su comportamiento semiplástico?", "formula": null, "opciones": ["Corteza oceánica", "Núcleo externo", "Astenosfera (manto superior)", "Núcleo interno"], "correcta": 2, "explicacion": "La astenosfera es la parte superior del manto con comportamiento semiplástico. Las placas (litosfera) se deslizan sobre ella.", "tip": "Litosfera = corteza + manto rígido superior = las placas. Astenosfera = manto plástico sobre el que flotan.", "fuente": ""}, {"id": "TI02", "tema": "Energía y Tierra", "subtema": "Deriva continental", "dificultad": "F", "enunciado": "Investigadores encuentran en la Antártida fósiles de grandes zonas boscosas del pasado. ¿Qué explica mejor este hallazgo?", "formula": null, "opciones": ["El clima global fue siempre tropical hasta hace poco", "Los continentes cambian de posición a lo largo del tiempo", "Los fósiles llegaron arrastrados por corrientes oceánicas", "La Antártida nunca tuvo hielo"], "correcta": 1, "explicacion": "La deriva continental explica que la Antártida estuvo en latitudes más cálidas en el pasado y migró hacia el polo sur.", "tip": "Evidencia de Wegener: fósiles de organismos de climas cálidos en regiones hoy frías. Los continentes se mueven.", "fuente": "PAES 2026"}, {"id": "TI03", "tema": "Energía y Tierra", "subtema": "Tectónica de placas", "dificultad": "M", "enunciado": "Un investigador superpone mapas de volcanes activos y epicentros de sismos. Ambos se concentran en la misma zona. ¿Qué tipo de límite de placas infiere?", "formula": null, "opciones": ["Divergente (dorsal oceánica)", "Transformante (falla)", "Convergente (subducción)", "Punto caliente (hotspot)"], "correcta": 2, "explicacion": "Volcanes activos + sismicidad intensa en la misma zona = límite convergente. La subducción genera fricción (sismos) y fusión de la placa hundida (volcanes).", "tip": "Convergente = sismos + volcanes. Transformante = solo sismos. Divergente = volcanes submarinos + sismos menores.", "fuente": "PAES 2025"}, {"id": "TI04", "tema": "Energía y Tierra", "subtema": "Expansión oceánica", "dificultad": "M", "enunciado": "Rocas del fondo oceánico se extraen de sectores 5 y 6, equidistantes de la dorsal (a distancia 2d), uno a cada lado. ¿Cuál afirmación es correcta?", "formula": null, "opciones": ["Las rocas de los sectores 2 y 5 tienen temperatura similar", "Las rocas de sectores 1 y 6 tienen igual densidad", "Las rocas de sectores 3 y 4 están a igual profundidad", "Las rocas de sectores 5 y 6 tienen edad similar"], "correcta": 3, "explicacion": "Rocas equidistantes de la dorsal (en lados opuestos) se formaron en el mismo momento → misma edad.", "tip": "En la dorsal, magma emerge y se solidifica simétricamente. Rocas a igual distancia de la dorsal (lados opuestos) tienen la misma edad.", "fuente": "PAES 2026"}, {"id": "TI05", "tema": "Energía y Tierra", "subtema": "Tectónica de placas", "dificultad": "F", "enunciado": "¿Qué tipo de límite de placas genera terremotos frecuentes pero sin volcanismo significativo?", "formula": null, "opciones": ["Convergente", "Divergente", "Transformante", "Todos generan volcanismo"], "correcta": 2, "explicacion": "Límite transformante: deslizamiento lateral → sismos frecuentes, sin creación ni destrucción de corteza → sin volcanismo. Ejemplo: Falla de San Andrés.", "tip": "Transformante = solo sismos. Convergente = sismos + volcanes. Divergente = volcanes submarinos + sismos menores.", "fuente": ""}, {"id": "TI06", "tema": "Energía y Tierra", "subtema": "Sismos", "dificultad": "F", "enunciado": "¿Cuál es la diferencia entre el foco y el epicentro de un sismo?", "formula": null, "opciones": ["El foco está en la superficie; el epicentro en profundidad", "El foco es el punto interior donde ocurre la ruptura; el epicentro es el punto en superficie sobre el foco", "Son sinónimos", "El foco mide la magnitud; el epicentro mide la intensidad"], "correcta": 1, "explicacion": "Foco (hipocentro): punto interior donde ocurre la ruptura. Epicentro: punto en superficie directamente sobre el foco, donde el sismo se siente más fuerte.", "tip": "Foco → en el interior (puede estar muy profundo). Epicentro → en la superficie, máxima intensidad.", "fuente": ""}, {"id": "TI07", "tema": "Energía y Tierra", "subtema": "Sismos", "dificultad": "M", "enunciado": "Las ondas sísmicas P y S se diferencian en que:", "formula": null, "opciones": ["Las ondas P provienen del epicentro y las S del foco", "Las ondas S pueden propagarse en agua y las P no", "Las ondas P son más lentas que las ondas S", "Las ondas S son transversales y las P son longitudinales"], "correcta": 3, "explicacion": "Ondas P (primarias) = longitudinales, viajan más rápido. Ondas S (secundarias) = transversales, viajan más lento y no pueden viajar en fluidos.", "tip": "P = primeras en llegar (más rápidas, longitudinales). S = secundarias (más lentas, transversales). Las S no viajan por el núcleo externo líquido.", "fuente": "PAES 2023"}, {"id": "TI08", "tema": "Energía y Tierra", "subtema": "Deriva continental", "dificultad": "M", "enunciado": "La cordillera de los Andes se formó principalmente por:", "formula": null, "opciones": ["Un límite divergente que separó Sudamérica de África", "La subducción de la Placa Nazca bajo la Placa Sudamericana", "El choque de dos placas continentales de igual densidad", "Un punto caliente bajo el continente"], "correcta": 1, "explicacion": "La subducción de la Placa Nazca (oceánica, más densa) bajo la Placa Sudamericana (continental) levantó los Andes y generó los volcanes andinos.", "tip": "Chile: límite convergente Nazca+Sudamericana → Andes + Cinturón de Fuego + terremotos frecuentes.", "fuente": ""}, {"id": "TI09", "tema": "Energía y Tierra", "subtema": "Tectónica de placas", "dificultad": "M", "enunciado": "Una hipótesis para explicar por qué la cordillera de los Andes es más alta en el norte chico de Chile que en el sur es:", "formula": null, "opciones": ["Existen lagunas sísmicas en el norte chico", "Hay más volcanes activos en el sur", "El ángulo de subducción de la Placa Nazca es menor en el norte chico", "La divergencia entre Nazca y el Pacífico es mayor en el sur"], "correcta": 2, "explicacion": "Un ángulo de subducción menor (más horizontal) genera mayor compresión en la corteza continental, lo que podría explicar mayor altura en los Andes.", "tip": "Esta es la hipótesis correcta para PAES 2026. Subducción más horizontal → mayor compresión → mayor altura.", "fuente": "PAES 2026"}, {"id": "TI10", "tema": "Energía y Tierra", "subtema": "Interior terrestre", "dificultad": "M", "enunciado": "¿Qué capa de la Tierra genera el campo magnético terrestre?", "formula": null, "opciones": ["Corteza continental", "Astenosfera", "Núcleo externo líquido (hierro y níquel)", "Manto inferior"], "correcta": 2, "explicacion": "El núcleo externo (líquido, hierro y níquel) genera el campo magnético terrestre por efecto dínamo de sus corrientes de convección.", "tip": "Núcleo externo = líquido → movimiento de metales conductores → campo magnético. Núcleo interno = sólido (altísima presión).", "fuente": ""}];
+
+const TEMAS = [...new Set(BANCO.map(q => q.tema))].sort();
+const LETRAS = ["A","B","C","D"];
+const COLORES_TEMA = {
+  "Método Científico":"#1a56db","Magnitudes y Vectores":"#0891b2",
+  "Ondas":"#7c3aed","Sonido":"#db2777","Luz":"#ea580c",
+  "Óptica":"#16a34a","Mecánica":"#dc2626","Electricidad":"#ca8a04",
+  "Energía y Tierra":"#15803d"
+};
+
+// ════════════════════════════════════════════════════
+// ESTADO
+// ════════════════════════════════════════════════════
+let modo = "ensayo";
+let tamano = 18;
+let temasSeleccionados = new Set(TEMAS);
+let nombre = "";
+let preguntas = [];
+let actual = 0;
+let elegidas = [];
+let timerTotal = 0;
+let timerRestante = 0;
+let timerInterval = null;
+let timerPausado = false;
+let ensayoActivo = false;
+
+// ════════════════════════════════════════════════════
+// NAVEGACIÓN
+// ════════════════════════════════════════════════════
+function showSection(sec) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+  document.getElementById("screen-" + (sec === "historial" ? "historial" : "home")).classList.add("active");
+  document.querySelectorAll(".tab")[sec === "historial" ? 1 : 0].classList.add("active");
+  if (sec === "historial") renderHistorial();
+}
+
+// ════════════════════════════════════════════════════
+// HOME SETUP
+// ════════════════════════════════════════════════════
+function initHome() {
+  const grid = document.getElementById("tema-grid");
+  grid.innerHTML = TEMAS.map(t => `
+    <div class="tema-btn selected" id="tema-${t.replace(/\s+/g,'_')}" onclick="toggleTema('${t}')">
+      <div class="ck">✓</div>
+      <span>${t}</span>
+    </div>`).join("");
+}
+
+function selMode(m) {
+  modo = m;
+  document.getElementById("mode-ensayo").classList.toggle("selected", m === "ensayo");
+  document.getElementById("mode-estudio").classList.toggle("selected", m === "estudio");
+}
+
+function selSize(n) {
+  tamano = n;
+  document.querySelectorAll(".size-btn").forEach(b => b.classList.remove("selected"));
+  const el = document.getElementById("sz-" + n);
+  if (el) el.classList.add("selected");
+  document.getElementById("custom-size").value = "";
+  document.getElementById("custom-time").textContent = "";
+}
+
+function clearSizeSel() {
+  document.querySelectorAll(".size-btn").forEach(b => b.classList.remove("selected"));
+}
+
+function selCustomSize(v) {
+  const n = parseInt(v);
+  if (n >= 5 && n <= 92) {
+    tamano = n;
+    document.querySelectorAll(".size-btn").forEach(b => b.classList.remove("selected"));
+    document.getElementById("custom-time").textContent = (n * 2) + " min";
+  }
+}
+
+function toggleTema(t) {
+  const id = "tema-" + t.replace(/\s+/g,"_");
+  const el = document.getElementById(id);
+  if (temasSeleccionados.has(t)) {
+    temasSeleccionados.delete(t);
+    el.classList.remove("selected");
+    el.querySelector(".ck").textContent = "";
+  } else {
+    temasSeleccionados.add(t);
+    el.classList.add("selected");
+    el.querySelector(".ck").textContent = "✓";
+  }
+}
+
+function toggleAllTemas() {
+  if (temasSeleccionados.size === TEMAS.length) {
+    temasSeleccionados.clear();
+    TEMAS.forEach(t => {
+      const el = document.getElementById("tema-" + t.replace(/\s+/g,"_"));
+      el.classList.remove("selected"); el.querySelector(".ck").textContent = "";
+    });
+  } else {
+    temasSeleccionados = new Set(TEMAS);
+    TEMAS.forEach(t => {
+      const el = document.getElementById("tema-" + t.replace(/\s+/g,"_"));
+      el.classList.add("selected"); el.querySelector(".ck").textContent = "✓";
+    });
+  }
+}
+
+// ════════════════════════════════════════════════════
+// INICIAR ENSAYO
+// ════════════════════════════════════════════════════
+function startEnsayo() {
+  nombre = document.getElementById("nombre-input").value.trim();
+  const pool = BANCO.filter(q => temasSeleccionados.has(q.tema));
+  if (pool.length < 5) { alert("Selecciona al menos un tema con preguntas disponibles."); return; }
+  const n = Math.min(tamano, pool.length);
+  preguntas = shuffle(pool).slice(0, n);
+  elegidas = new Array(n).fill(null);
+  actual = 0;
+  ensayoActivo = true;
+
+  document.getElementById("screen-home").classList.remove("active");
+  document.getElementById("screen-quiz").classList.add("active");
+  document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+
+  if (modo === "ensayo") {
+    timerTotal = n * 120;
+    timerRestante = timerTotal;
+    startTimer();
+    document.getElementById("timer-bar").style.display = "block";
+  }
+  renderPregunta();
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// ════════════════════════════════════════════════════
+// TIMER
+// ════════════════════════════════════════════════════
+function startTimer() {
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    if (!timerPausado) {
+      timerRestante--;
+      updateTimerUI();
+      if (timerRestante <= 0) { clearInterval(timerInterval); finalizarEnsayo(); }
+    }
+  }, 1000);
+}
+
+function updateTimerUI() {
+  const m = Math.floor(timerRestante / 60).toString().padStart(2, "0");
+  const s = (timerRestante % 60).toString().padStart(2, "0");
+  const el = document.getElementById("timer-nums");
+  const fill = document.getElementById("timer-fill");
+  const pct = (timerRestante / timerTotal) * 100;
+  el.textContent = m + ":" + s;
+  fill.style.width = pct + "%";
+  const warn = timerRestante < 60;
+  el.classList.toggle("warning", warn);
+  fill.classList.toggle("warning", warn);
+}
+
+function pauseTimer() {
+  timerPausado = !timerPausado;
+  const btn = document.querySelector(".timer-bar .btn-sm");
+  btn.textContent = timerPausado ? "▶" : "⏸";
+}
+
+function stopTimer() {
+  clearInterval(timerInterval);
+  document.getElementById("timer-bar").style.display = "none";
+}
+
+// ════════════════════════════════════════════════════
+// RENDER PREGUNTA
+// ════════════════════════════════════════════════════
+function renderPregunta() {
+  if (actual >= preguntas.length) { finalizarEnsayo(); return; }
+  const q = preguntas[actual];
+  const pct = (actual / preguntas.length) * 100;
+  document.getElementById("prog").style.width = pct + "%";
+  document.getElementById("prog-lbl").textContent = (actual + 1) + " / " + preguntas.length;
+  document.getElementById("aviso").style.display = "none";
+
+  const color = COLORES_TEMA[q.tema] || "#64748b";
+  const difColor = q.dificultad === "F" ? "var(--verde)" : q.dificultad === "M" ? "var(--ambar)" : "var(--rojo)";
+  const difLabel = q.dificultad === "F" ? "Fácil" : q.dificultad === "M" ? "Medio" : "Difícil";
+  const formula = q.formula ? `<div class="q-formula">${q.formula}</div>` : "";
+  const fuente = q.fuente ? `<span class="badge" style="background:#f3f4f6;color:#374151">${q.fuente}</span>` : "";
+
+  const optsEl = q.opciones.map((o, i) => {
+    const sel = elegidas[actual] === i ? "sel" : "";
+    return `<div class="opt ${sel}" id="opt-${i}" onclick="elegir(${i})">
+      <div class="opt-circle">${LETRAS[i]}</div>
+      <div class="opt-text">${o}</div>
+    </div>`;
+  }).join("");
+
+  const esUltima = actual === preguntas.length - 1;
+
+  document.getElementById("q-card").innerHTML = `
+    <div class="q-meta">
+      <div class="q-num">Pregunta ${actual + 1}</div>
+      <div class="q-tags">
+        <span class="badge" style="background:${color}20;color:${color}">${q.tema}</span>
+        <span class="badge" style="background:${difColor}20;color:${difColor}">${difLabel}</span>
+        ${fuente}
+      </div>
+    </div>
+    <div class="q-text">${q.enunciado}</div>
+    ${formula}
+    <div class="opts" id="opts-wrap">${optsEl}</div>
+    <div class="fb-box" id="fb-box"></div>
+  `;
+
+  document.getElementById("nav-btns").innerHTML = `
+    ${actual > 0 ? '<button class="btn btn-outline" style="flex:1" onclick="anterior()">← Anterior</button>' : ""}
+    <button class="btn" style="flex:2" onclick="siguiente()">${esUltima ? "Finalizar ensayo →" : "Siguiente →"}</button>
+  `;
+}
+
+function elegir(idx) {
+  elegidas[actual] = idx;
+  document.querySelectorAll(".opt").forEach((o, i) => o.classList.toggle("sel", i === idx));
+  document.getElementById("aviso").style.display = "none";
+
+  if (modo === "estudio") {
+    const q = preguntas[actual];
+    const opts = document.querySelectorAll(".opt");
+    opts.forEach(o => o.classList.add("disabled"));
+    opts[idx].classList.remove("sel");
+    if (idx === q.correcta) {
+      opts[idx].classList.add("correct");
+    } else {
+      opts[idx].classList.add("wrong");
+      opts[q.correcta].classList.add("show-correct");
+    }
+    const fb = document.getElementById("fb-box");
+    fb.className = "fb-box show " + (idx === q.correcta ? "ok" : "bad");
+    fb.innerHTML = (idx === q.correcta ? "✓ " : "✗ ") + q.explicacion +
+      (q.tip ? `<div class="tip-box">💡 ${q.tip}</div>` : "");
+  }
+}
+
+function siguiente() {
+  if (elegidas[actual] === null) { document.getElementById("aviso").style.display = "block"; return; }
+  actual++;
+  renderPregunta();
+}
+
+function anterior() {
+  if (actual > 0) { actual--; renderPregunta(); }
+}
+
+// ════════════════════════════════════════════════════
+// FINALIZAR
+// ════════════════════════════════════════════════════
+function finalizarEnsayo() {
+  stopTimer();
+  ensayoActivo = false;
+  let correctas = 0;
+  preguntas.forEach((q, i) => { if (elegidas[i] === q.correcta) correctas++; });
+  const pct = Math.round((correctas / preguntas.length) * 100);
+  const tiempo = timerTotal - timerRestante;
+
+  // Guardar en historial
+  const entry = {
+    fecha: new Date().toLocaleString("es-CL"),
+    nombre: nombre || "Anónimo",
+    modo, preguntas: preguntas.length, correctas, pct,
+    tiempo, temas: [...temasSeleccionados],
+    detalle: preguntas.map((q, i) => ({
+      id: q.id, tema: q.tema, subtema: q.subtema,
+      enunciado: q.enunciado, opciones: q.opciones,
+      correcta: q.correcta, elegida: elegidas[i],
+      ok: elegidas[i] === q.correcta,
+      explicacion: q.explicacion, tip: q.tip, fuente: q.fuente
+    }))
+  };
+  saveHistorial(entry);
+
+  // Pantalla resultados
+  document.getElementById("screen-quiz").classList.remove("active");
+  document.getElementById("screen-results").classList.add("active");
+  document.getElementById("res-pct").textContent = pct + "%";
+  document.getElementById("res-sub").textContent = correctas + " de " + preguntas.length + " correctas" +
+    (tiempo > 0 ? " · " + Math.floor(tiempo/60) + ":" + (tiempo%60).toString().padStart(2,"0") + " min" : "");
+  document.getElementById("st-c").textContent = correctas;
+  document.getElementById("st-i").textContent = preguntas.length - correctas;
+  document.getElementById("st-t").textContent = correctas + "/" + preguntas.length;
+
+  renderTemaStats(entry.detalle);
+  renderReview(entry.detalle);
+}
+
+function renderTemaStats(detalle) {
+  const byTema = {};
+  detalle.forEach(d => {
+    if (!byTema[d.tema]) byTema[d.tema] = { c: 0, t: 0 };
+    byTema[d.tema].t++;
+    if (d.ok) byTema[d.tema].c++;
+  });
+  const el = document.getElementById("tema-stats");
+  el.innerHTML = Object.entries(byTema).map(([t, v]) => {
+    const p = Math.round((v.c / v.t) * 100);
+    const color = p >= 70 ? "#16a34a" : p >= 40 ? "#ca8a04" : "#dc2626";
+    return `<div class="tema-stat">
+      <div class="tema-stat-name">${t}</div>
+      <div class="tema-bar-wrap"><div class="tema-bar" style="width:${p}%;background:${color}"></div></div>
+      <div class="tema-pct" style="color:${color}">${p}%</div>
+    </div>`;
+  }).join("");
+}
+
+function renderReview(detalle) {
+  const el = document.getElementById("review-items");
+  el.innerHTML = detalle.map((d, i) => {
+    const cls = d.ok ? "ok" : "bad";
+    const elegida = d.elegida !== null ? `Tu respuesta: ${LETRAS[d.elegida]}. ${d.opciones[d.elegida]}` : "Sin responder";
+    const correcta = `Correcta: ${LETRAS[d.correcta]}. ${d.opciones[d.correcta]}`;
+    const body = d.ok
+      ? `<div class="review-body" id="rb-${i}">
+          <div style="color:var(--verde);font-size:12px;margin-bottom:4px">✓ ${elegida}</div>
+          ${d.explicacion}
+          ${d.tip ? `<div class="review-tip">💡 ${d.tip}</div>` : ""}
+         </div>`
+      : `<div class="review-body" id="rb-${i}">
+          <div class="review-el">✗ ${elegida}</div>
+          <div class="review-co">✓ ${correcta}</div>
+          ${d.explicacion}
+          ${d.tip ? `<div class="review-tip">💡 ${d.tip}</div>` : ""}
+         </div>`;
+    return `<div class="review-item">
+      <div class="review-h ${cls}" onclick="toggleReview(${i})">
+        <div class="review-icon ${cls}">${d.ok ? "✓" : "✗"}</div>
+        <div class="review-lbl ${cls}">P${i+1} · ${d.subtema}</div>
+        <span style="font-size:11px;color:${d.ok ? '#065f46' : '#7f1d1d'}">▼</span>
+      </div>
+      ${body}
+    </div>`;
+  }).join("");
+}
+
+function toggleReview(i) {
+  const el = document.getElementById("rb-" + i);
+  el.classList.toggle("open");
+}
+
+// ════════════════════════════════════════════════════
+// PDF
+// ════════════════════════════════════════════════════
+function descargarPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+  let y = 20;
+  const lm = 15, pw = 180;
+
+  const addLine = (txt, fs, bold, color) => {
+    doc.setFontSize(fs || 10);
+    doc.setFont("helvetica", bold ? "bold" : "normal");
+    if (color) doc.setTextColor(...color); else doc.setTextColor(0);
+    const lines = doc.splitTextToSize(txt, pw);
+    lines.forEach(l => {
+      if (y > 275) { doc.addPage(); y = 20; }
+      doc.text(l, lm, y); y += (fs || 10) * 0.45;
+    });
+    y += 2;
+  };
+
+  // Header
+  doc.setFillColor(30, 58, 95);
+  doc.rect(0, 0, 210, 28, "F");
+  doc.setTextColor(255,255,255);
+  doc.setFontSize(14); doc.setFont("helvetica","bold");
+  doc.text("Ensayo PAES Física — Preuniversitario UV", lm, 12);
+  doc.setFontSize(9); doc.setFont("helvetica","normal");
+  const pct = document.getElementById("res-pct").textContent;
+  const sub = document.getElementById("res-sub").textContent;
+  doc.text(nombre ? `Estudiante: ${nombre}  ·  ${sub}  ·  Resultado: ${pct}` : `${sub}  ·  Resultado: ${pct}`, lm, 21);
+  doc.text(`Generado: ${new Date().toLocaleString("es-CL")}`, lm, 25);
+  y = 38;
+
+  preguntas.forEach((q, i) => {
+    const ok = elegidas[i] === q.correcta;
+    if (y > 250) { doc.addPage(); y = 15; }
+    doc.setFillColor(ok ? 227 : 253, ok ? 252 : 232, ok ? 239 : 232);
+    doc.roundedRect(lm - 2, y - 4, pw + 4, 8, 1, 1, "F");
+    doc.setTextColor(ok ? 5 : 127, ok ? 95 : 29, ok ? 70 : 29);
+    doc.setFontSize(9); doc.setFont("helvetica","bold");
+    doc.text(`P${i+1} ${ok?"✓":"✗"} · ${q.subtema}`, lm, y);
+    doc.setTextColor(100, 116, 139); doc.setFont("helvetica","normal"); doc.setFontSize(8);
+    doc.text(`[${q.tema}]`, lm + pw - 20, y);
+    y += 8;
+    addLine(q.enunciado, 9, false, [15, 23, 42]);
+    if (q.formula) { addLine(`Fórmula: ${q.formula}`, 8, false, [26, 86, 219]); }
+    q.opciones.forEach((o, j) => {
+      const isCorrecta = j === q.correcta;
+      const isElegida = j === elegidas[i];
+      let prefix = "  " + LETRAS[j] + ". ";
+      if (isCorrecta) prefix = "  " + LETRAS[j] + ". ✓ ";
+      if (isElegida && !ok) prefix = "  " + LETRAS[j] + ". ✗ ";
+      const col = isCorrecta ? [5,95,70] : (isElegida && !ok ? [127,29,29] : [100,116,139]);
+      addLine(prefix + o, 8, isCorrecta || isElegida, col);
+    });
+    y += 1;
+    addLine("Explicación: " + q.explicacion, 8, false, [71, 85, 105]);
+    if (q.tip) addLine("💡 " + q.tip, 8, false, [146, 64, 14]);
+    y += 4;
+    doc.setDrawColor(226, 232, 240);
+    doc.line(lm, y, lm + pw, y);
+    y += 6;
+  });
+
+  doc.save(`ensayo_fisica_${new Date().toISOString().slice(0,10)}.pdf`);
+}
+
+// ════════════════════════════════════════════════════
+// HISTORIAL (localStorage)
+// ════════════════════════════════════════════════════
+function getHistorial() {
+  try { return JSON.parse(localStorage.getItem("ensayos_fisica") || "[]"); }
+  catch { return []; }
+}
+function saveHistorial(entry) {
+  const h = getHistorial();
+  h.unshift(entry);
+  const trimmed = h.slice(0, 50);
+  localStorage.setItem("ensayos_fisica", JSON.stringify(trimmed));
+}
+function clearHistorial() {
+  if (confirm("¿Borrar todo el historial?")) {
+    localStorage.removeItem("ensayos_fisica");
+    renderHistorial();
+  }
+}
+function renderHistorial() {
+  const h = getHistorial();
+  const el = document.getElementById("hist-list");
+  if (!h.length) { el.innerHTML = '<div class="hist-empty">No hay ensayos guardados aún.<br>Completa tu primer ensayo para verlo aquí.</div>'; return; }
+  el.innerHTML = h.map((e, i) => {
+    const color = e.pct >= 70 ? "#16a34a" : e.pct >= 40 ? "#ca8a04" : "#dc2626";
+    return `<div class="hist-item">
+      <div class="hist-pct" style="color:${color}">${e.pct}%</div>
+      <div class="hist-info">
+        <div class="hist-title">${e.nombre !== "Anónimo" ? e.nombre + " · " : ""}${e.correctas}/${e.preguntas} correctas · ${e.modo}</div>
+        <div class="hist-meta">${e.fecha} · ${e.temas.length} temas</div>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+// ════════════════════════════════════════════════════
+// NUEVO ENSAYO
+// ════════════════════════════════════════════════════
+function nuevoEnsayo() {
+  document.getElementById("screen-results").classList.remove("active");
+  document.getElementById("screen-home").classList.add("active");
+  document.querySelectorAll(".tab")[0].classList.add("active");
+}
+
+// ════════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════════
+initHome();
+</script>
+</body>
+</html>
