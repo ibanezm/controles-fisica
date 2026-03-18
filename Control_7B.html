@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Control de entrada — Mecánica</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+  :root{--azul:#1a56db;--azul-claro:#ebf0ff;--verde:#057a55;--verde-claro:#e3fcef;--rojo:#c81e1e;--rojo-claro:#fde8e8;--gris-bg:#f8f9fa;--gris-borde:#e2e8f0;--gris-texto:#64748b;--negro:#0f172a;--blanco:#ffffff;--radio:10px}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'IBM Plex Sans',sans-serif;background:var(--gris-bg);color:var(--negro);min-height:100vh;padding:1.5rem 1rem 3rem}
+  .container{max-width:620px;margin:0 auto}
+  .header{text-align:center;margin-bottom:2rem}
+  .header .tag{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--azul);background:var(--azul-claro);padding:4px 12px;border-radius:20px;margin-bottom:10px}
+  .header h1{font-size:22px;font-weight:600;margin-bottom:4px}
+  .header p{font-size:13px;color:var(--gris-texto)}
+  .progress-wrap{display:flex;align-items:center;gap:10px;margin-bottom:1.5rem}
+  .progress-track{flex:1;height:5px;background:var(--gris-borde);border-radius:10px;overflow:hidden}
+  .progress-fill{height:100%;background:var(--azul);border-radius:10px;transition:width .4s ease;width:0%}
+  .progress-label{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--gris-texto);white-space:nowrap}
+  .card{background:var(--blanco);border:1px solid var(--gris-borde);border-radius:var(--radio);padding:1.5rem;margin-bottom:1rem}
+  .rut-wrap{text-align:center}
+  .rut-icon{width:56px;height:56px;background:var(--azul-claro);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:26px}
+  .rut-wrap h2{font-size:17px;font-weight:600;margin-bottom:6px}
+  .rut-wrap p{font-size:13px;color:var(--gris-texto);margin-bottom:1.5rem;line-height:1.6}
+  .rut-input{width:100%;padding:12px 16px;font-size:20px;font-family:'IBM Plex Mono',monospace;border:1.5px solid var(--gris-borde);border-radius:var(--radio);text-align:center;letter-spacing:.05em;outline:none;transition:border-color .2s;margin-bottom:6px}
+  .rut-input:focus{border-color:var(--azul)}
+  .rut-hint{font-size:11px;color:var(--gris-texto);margin-bottom:1.25rem}
+  .rut-error{font-size:12px;color:var(--rojo);margin-bottom:.75rem;display:none}
+  .btn{width:100%;padding:13px;background:var(--azul);color:white;font-family:'IBM Plex Sans',sans-serif;font-size:15px;font-weight:500;border:none;border-radius:var(--radio);cursor:pointer;transition:opacity .2s,transform .1s}
+  .btn:hover{opacity:.9}
+  .btn:active{transform:scale(.98)}
+  .btn-outline{background:transparent;color:var(--azul);border:1.5px solid var(--azul);margin-top:10px}
+  .btn-outline:hover{background:var(--azul-claro)}
+  .q-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+  .q-num{font-size:12px;font-weight:600;color:var(--azul);text-transform:uppercase;letter-spacing:.06em}
+  .q-tag{font-size:11px;color:var(--gris-texto);background:var(--gris-bg);padding:3px 8px;border-radius:20px}
+  .q-text{font-size:16px;font-weight:500;line-height:1.55;margin-bottom:1rem}
+  .q-formula{font-family:'IBM Plex Mono',monospace;font-size:14px;color:var(--azul);background:var(--azul-claro);padding:8px 14px;border-radius:8px;display:inline-block;margin-bottom:1rem}
+  .options{display:flex;flex-direction:column;gap:8px}
+  .opt{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border:1.5px solid var(--gris-borde);border-radius:var(--radio);cursor:pointer;transition:all .15s;background:var(--blanco);-webkit-tap-highlight-color:transparent}
+  .opt:hover{border-color:var(--azul);background:var(--azul-claro)}
+  .opt.selected{border-color:var(--azul);background:var(--azul-claro)}
+  .opt.disabled{pointer-events:none}
+  .opt-circle{width:28px;height:28px;min-width:28px;border-radius:50%;border:1.5px solid var(--gris-borde);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--gris-texto);transition:all .15s;margin-top:1px}
+  .opt.selected .opt-circle{background:var(--azul);border-color:var(--azul);color:white}
+  .opt-text{font-size:14px;line-height:1.45}
+  .aviso{font-size:12px;color:var(--rojo);margin-top:8px;display:none}
+  .nav{margin-top:1rem}
+  .score-card{background:#1e3a5f;color:white;border-radius:var(--radio);padding:1.5rem;text-align:center;margin-bottom:1rem}
+  .score-label{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#93b4d4;margin-bottom:4px}
+  .score-num{font-size:56px;font-weight:600;font-family:'IBM Plex Mono',monospace;line-height:1;margin-bottom:4px;color:#e8f1fb}
+  .score-sub{font-size:13px;color:#93b4d4}
+  .stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1.25rem}
+  .stat-box{background:var(--gris-bg);border-radius:8px;padding:12px 8px;text-align:center}
+  .stat-box .val{font-size:20px;font-weight:600;color:var(--negro)}
+  .stat-box .lbl{font-size:11px;color:var(--gris-texto);margin-top:2px}
+  .detalle-titulo{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--gris-texto);margin-bottom:10px}
+  .detalle-item{border:1px solid var(--gris-borde);border-radius:var(--radio);margin-bottom:8px;overflow:hidden}
+  .detalle-header{display:flex;align-items:center;gap:10px;padding:10px 14px}
+  .detalle-header.ok{background:var(--verde-claro)}
+  .detalle-header.bad{background:var(--rojo-claro)}
+  .detalle-icono{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+  .detalle-icono.ok{background:var(--verde);color:white}
+  .detalle-icono.bad{background:var(--rojo);color:white}
+  .detalle-label{font-size:13px;font-weight:500}
+  .detalle-label.ok{color:#065f46}
+  .detalle-label.bad{color:#7f1d1d}
+  .detalle-body{padding:10px 14px;font-size:13px;line-height:1.6;color:var(--gris-texto);border-top:1px solid var(--gris-borde)}
+  .detalle-elegida{font-size:12px;color:var(--rojo);margin-bottom:4px}
+  .detalle-correcta{font-size:12px;color:var(--verde);margin-bottom:6px}
+  .sync-badge{display:none;text-align:center;font-size:12px;padding:6px 0;color:var(--gris-texto);margin-bottom:1rem}
+  .sync-badge.show{display:block}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="tag">Preuniversitario UV · Física</div>
+    <h1>Control 7B — Mecánica</h1>
+    <p>DCL · Planos inclinados · Ley de Hooke · 5 preguntas · sin nota</p>
+  </div>
+  <div id="screen-rut">
+    <div class="card">
+      <div class="rut-wrap">
+        <div class="rut-icon">📋</div>
+        <h2>Ingresa tu RUT</h2>
+        <p>Solo para llevar seguimiento de tu progreso durante el semestre. Sin puntos ni guión, solo números.</p>
+        <input type="tel" class="rut-input" id="rut-input" placeholder="12345678" maxlength="9" inputmode="numeric">
+        <div class="rut-hint">Ej: si tu RUT es 12.345.678-9 → escribe 12345678</div>
+        <div class="rut-error" id="rut-error">⚠ Ingresa al menos 7 dígitos</div>
+        <button class="btn" onclick="startQuiz()">Comenzar →</button>
+      </div>
+    </div>
+  </div>
+  <div id="screen-quiz" style="display:none;">
+    <div class="progress-wrap">
+      <div class="progress-track"><div class="progress-fill" id="prog"></div></div>
+      <div class="progress-label" id="prog-label">1 / 5</div>
+    </div>
+    <div class="card" id="question-card"></div>
+    <div class="aviso" id="aviso">Debes seleccionar una opción para continuar.</div>
+    <div class="nav" id="nav-btn"></div>
+  </div>
+  <div id="screen-results" style="display:none;">
+    <div class="score-card">
+      <div class="score-label">Resultado</div>
+      <div class="score-num" id="score-num">—</div>
+      <div class="score-sub" id="score-sub">—</div>
+    </div>
+    <div class="card">
+      <div class="stats-grid">
+        <div class="stat-box"><div class="val" id="st-v">0</div><div class="lbl">Correctas</div></div>
+        <div class="stat-box"><div class="val" id="st-r">0</div><div class="lbl">Incorrectas</div></div>
+        <div class="stat-box"><div class="val" id="st-p">0/5</div><div class="lbl">Puntaje</div></div>
+      </div>
+      <div class="sync-badge" id="sync-badge"></div>
+      <div class="detalle-titulo">Revisión pregunta a pregunta</div>
+      <div id="detalle-items"></div>
+      <button class="btn btn-outline" onclick="restart()">Volver a intentar</button>
+    </div>
+  </div>
+</div>
+<script>
+const CONFIG={sheet_url:"https://script.google.com/macros/s/AKfycbzBX3WZt-KgEWgcWhVDlk15ZvEm5Ehl_JvAAgnSHAJBbkuaRzq8qmz-mqB-88EeCk8U/exec",control_id:"Control 7B",control_tema:"Mecánica"};
+const preguntas=[{"texto": "Un bloque de 3 kg reposa en equilibrio sobre un plano inclinado a 30°. ¿Cuál es la fuerza normal sobre el bloque? (g = 10 m/s²)", "formula": "N = m·g·cos θ", "opciones": ["30 N", "15 N", "25,98 N ≈ 26 N", "10 N"], "correcta": 2, "label": "Plano inclinado", "fb_ok": "Correcto. N = mgcos30° = 3 × 10 × 0,866 ≈ 26 N. En un plano inclinado, la normal es menor que el peso.", "fb_mal": "N = m·g·cosθ = 3 kg × 10 m/s² × cos30° = 30 × 0,866 ≈ 26 N. La normal en un plano inclinado es menor que el peso porque no compensa el peso completo, solo su componente perpendicular."}, {"texto": "En un Diagrama de Cuerpo Libre (DCL), ¿qué se dibuja?", "formula": null, "opciones": ["Todas las fuerzas del entorno, incluidas las que no actúan sobre el cuerpo", "Solo la fuerza de gravedad", "Solo las fuerzas que actúan directamente sobre el cuerpo analizado", "El movimiento del cuerpo con flechas de velocidad"], "correcta": 2, "label": "Diagrama de Cuerpo Libre", "fb_ok": "Correcto. En el DCL se dibujan exclusivamente las fuerzas que actúan sobre el cuerpo de interés. No se incluyen fuerzas que el cuerpo ejerce sobre otros.", "fb_mal": "El DCL incluye solo las fuerzas que actúan sobre el cuerpo analizado: peso, normal, tensión, roce, etc. No se incluyen fuerzas que ese cuerpo ejerce sobre otros (par de Newton)."}, {"texto": "Un resorte tiene constante k = 200 N/m. ¿Cuánto se estira si se cuelga un objeto de 2 kg? (g = 10 m/s²)", "formula": "F = k · x", "opciones": ["0,01 m", "0,1 m", "1 m", "4 m"], "correcta": 1, "label": "Ley de Hooke", "fb_ok": "Correcto. F = mg = 20 N. x = F/k = 20/200 = 0,1 m.", "fb_mal": "Peso del objeto: F = mg = 2 × 10 = 20 N. Usando Ley de Hooke: x = F/k = 20 N / 200 N/m = 0,1 m."}, {"texto": "¿Cuál es la diferencia entre masa y peso?", "formula": null, "opciones": ["Son lo mismo, solo con distintas unidades", "La masa es una fuerza en N; el peso es una cantidad escalar en kg", "La masa es la cantidad de materia (kg); el peso es la fuerza gravitacional (N)", "La masa cambia con la gravedad; el peso no"], "correcta": 2, "label": "Masa vs. peso", "fb_ok": "Correcto. La masa (kg) es la cantidad de materia y no cambia. El peso (N) es la fuerza gravitacional P = mg y depende del campo gravitacional del lugar.", "fb_mal": "Masa (kg): cantidad de materia, no cambia con el lugar. Peso (N): fuerza gravitacional = mg, varía con g. En la Luna, misma masa pero menor peso (g_Luna ≈ 1,6 m/s²)."}, {"texto": "El coeficiente de roce estático μₑ entre un bloque y una superficie es 0,4. El bloque tiene masa 5 kg (g = 10 m/s²). ¿Cuál es la fuerza máxima de roce estático?", "formula": "fᵣₑ_máx = μₑ · N", "opciones": ["2 N", "20 N", "40 N", "0,4 N"], "correcta": 1, "label": "Fuerza de roce estático", "fb_ok": "Correcto. N = mg = 50 N. fᵣₑ_máx = μₑ × N = 0,4 × 50 = 20 N.", "fb_mal": "N = mg = 5 × 10 = 50 N. fᵣₑ_máx = μₑ × N = 0,4 × 50 = 20 N. Esta es la fuerza máxima que puede ejercer el roce antes de que el objeto comience a moverse."}];
+let rut="",actual=0,elegidas=new Array(preguntas.length).fill(null);
+const letras=["A","B","C","D"];
+document.getElementById('rut-input').addEventListener('input',function(e){e.target.value=e.target.value.replace(/\D/g,'')});
+document.getElementById('rut-input').addEventListener('keydown',function(e){if(e.key==='Enter')startQuiz()});
+function startQuiz(){const val=document.getElementById('rut-input').value.trim();const err=document.getElementById('rut-error');if(val.length<7){err.style.display='block';return}err.style.display='none';rut=val;document.getElementById('screen-rut').style.display='none';document.getElementById('screen-quiz').style.display='block';renderPregunta()}
+function renderPregunta(){const q=preguntas[actual];document.getElementById('prog').style.width=((actual/preguntas.length)*100)+'%';document.getElementById('prog-label').textContent=(actual+1)+' / '+preguntas.length;document.getElementById('aviso').style.display='none';const formula=q.formula?`<div class="q-formula">${q.formula}</div>`:'';const opts=q.opciones.map((o,i)=>{const sel=elegidas[actual]===i?'selected':'';return`<div class="opt ${sel}" id="opt-${i}" onclick="elegir(${i})"><div class="opt-circle">${letras[i]}</div><div class="opt-text">${o}</div></div>`}).join('');document.getElementById('question-card').innerHTML=`<div class="q-meta"><div class="q-num">Pregunta ${actual+1} de ${preguntas.length}</div><div class="q-tag">${q.label}</div></div><div class="q-text">${q.texto}</div>${formula}<div class="options">${opts}</div>`;document.getElementById('nav-btn').innerHTML=`<button class="btn" onclick="siguiente()">${actual===preguntas.length-1?'Ver mis resultados →':'Siguiente →'}</button>`}
+function elegir(idx){elegidas[actual]=idx;document.querySelectorAll('.opt').forEach((o,i)=>o.classList.toggle('selected',i===idx));document.getElementById('aviso').style.display='none'}
+function siguiente(){if(elegidas[actual]===null){document.getElementById('aviso').style.display='block';return}actual++;if(actual>=preguntas.length)mostrarResultados();else renderPregunta()}
+function mostrarResultados(){document.getElementById('screen-quiz').style.display='none';document.getElementById('screen-results').style.display='block';let correctas=0;preguntas.forEach(function(q,i){if(elegidas[i]===q.correcta)correctas++});const pct=Math.round((correctas/preguntas.length)*100);document.getElementById('score-num').textContent=pct+'%';document.getElementById('score-sub').textContent=correctas+' de '+preguntas.length+' preguntas correctas';document.getElementById('st-v').textContent=correctas;document.getElementById('st-r').textContent=preguntas.length-correctas;document.getElementById('st-p').textContent=correctas+'/'+preguntas.length;const detalle=preguntas.map(function(q,i){const ok=elegidas[i]===q.correcta;const cls=ok?'ok':'bad';const elegidaTexto=`Tu respuesta: ${letras[elegidas[i]]}. ${q.opciones[elegidas[i]]}`;const correctaTexto=`Correcta: ${letras[q.correcta]}. ${q.opciones[q.correcta]}`;const cuerpo=ok?`<div class="detalle-body">${q.fb_ok}</div>`:`<div class="detalle-body"><div class="detalle-elegida">✗ ${elegidaTexto}</div><div class="detalle-correcta">✓ ${correctaTexto}</div>${q.fb_mal}</div>`;return`<div class="detalle-item"><div class="detalle-header ${cls}"><div class="detalle-icono ${cls}">${ok?'✓':'✗'}</div><div class="detalle-label ${cls}">P${i+1} — ${q.label}</div></div>${cuerpo}</div>`}).join('');document.getElementById('detalle-items').innerHTML=detalle;enviarSheet(correctas,pct)}
+function enviarSheet(correctas,pct){const badge=document.getElementById('sync-badge');if(!CONFIG.sheet_url||CONFIG.sheet_url==="https://script.google.com/macros/s/AKfycbzBX3WZt-KgEWgcWhVDlk15ZvEm5Ehl_JvAAgnSHAJBbkuaRzq8qmz-mqB-88EeCk8U/exec")return;badge.className='sync-badge show';badge.textContent='⏳ Guardando resultado...';fetch(CONFIG.sheet_url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({control_id:CONFIG.control_id,control_tema:CONFIG.control_tema,rut:rut,fecha:new Date().toLocaleString('es-CL'),correctas:correctas,total:preguntas.length,porcentaje:pct})}).then(function(){badge.textContent='✓ Resultado guardado'}).catch(function(){badge.textContent='⚠ Sin conexión — resultado no guardado'})}
+function restart(){actual=0;elegidas=new Array(preguntas.length).fill(null);document.getElementById('screen-results').style.display='none';document.getElementById('screen-quiz').style.display='block';renderPregunta()}
+</script>
+</body>
+</html>
