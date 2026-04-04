@@ -71,6 +71,15 @@
   .detalle-correcta{font-size:12px;color:var(--verde);margin-bottom:6px}
   .sync-badge{display:none;text-align:center;font-size:12px;padding:6px 0;color:var(--gris-texto);margin-bottom:1rem}
   .sync-badge.show{display:block}
+  /* Historial */
+  .hist-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem}
+  .hist-tag{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--azul);background:var(--azul-claro);padding:4px 12px;border-radius:20px}
+  .hist-rut{font-size:13px;color:var(--gris-texto);margin-top:4px}
+  .btn-volver{background:transparent;color:var(--azul);border:1.5px solid var(--azul);border-radius:var(--radio);padding:8px 16px;font-size:13px;font-weight:500;cursor:pointer;width:auto}
+  .btn-volver:hover{background:var(--azul-claro)}
+  .hist-loading{text-align:center;padding:2rem;color:var(--gris-texto);font-size:13px}
+  .hist-error{color:var(--rojo);font-size:13px;text-align:center;padding:1rem;display:none}
+  .hist-pct{margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:600}
 </style>
 </head>
 <body>
@@ -80,6 +89,8 @@
     <h1>Control 1A — Método Científico</h1>
     <p>Etapas · Hipótesis · Teoría · Ley · 5 preguntas · sin nota</p>
   </div>
+
+  <!-- ══ PANTALLA 1: INGRESO RUT ══ -->
   <div id="screen-rut">
     <div class="card">
       <div class="rut-wrap">
@@ -90,9 +101,12 @@
         <div class="rut-hint">Ej: si tu RUT es 12.345.678-9 → escribe 12345678</div>
         <div class="rut-error" id="rut-error">⚠ Ingresa al menos 7 dígitos</div>
         <button class="btn" onclick="startQuiz()">Comenzar →</button>
+        <button class="btn btn-outline" onclick="verHistorial()">Ver mi historial</button>
       </div>
     </div>
   </div>
+
+  <!-- ══ PANTALLA 2: QUIZ ══ -->
   <div id="screen-quiz" style="display:none;">
     <div class="progress-wrap">
       <div class="progress-track"><div class="progress-fill" id="prog"></div></div>
@@ -102,6 +116,8 @@
     <div class="aviso" id="aviso">Debes seleccionar una opción para continuar.</div>
     <div class="nav" id="nav-btn"></div>
   </div>
+
+  <!-- ══ PANTALLA 3: RESULTADOS ══ -->
   <div id="screen-results" style="display:none;">
     <div class="score-card">
       <div class="score-label">Resultado</div>
@@ -118,23 +134,312 @@
       <div class="detalle-titulo">Revisión pregunta a pregunta</div>
       <div id="detalle-items"></div>
       <button class="btn btn-outline" onclick="restart()">Volver a intentar</button>
+      <button class="btn btn-outline" style="margin-top:8px" onclick="irAHistorial()">Ver mi historial completo</button>
     </div>
   </div>
+
+  <!-- ══ PANTALLA 4: HISTORIAL ══ -->
+  <div id="screen-historial" style="display:none;">
+    <div class="card">
+      <div class="hist-header">
+        <div>
+          <div class="hist-tag">Mi historial</div>
+          <div class="hist-rut" id="hist-rut-label"></div>
+        </div>
+        <button class="btn-volver" onclick="volverInicio()">← Volver</button>
+      </div>
+      <div class="stats-grid" id="hist-stats"></div>
+      <div class="detalle-titulo" id="hist-subtitulo" style="display:none">Todos mis intentos</div>
+      <div id="hist-tabla"></div>
+      <div class="hist-loading" id="hist-loading">⏳ Cargando historial...</div>
+      <div class="hist-error" id="hist-error"></div>
+    </div>
+  </div>
+
 </div>
 <script>
-const CONFIG={sheet_url:"https://script.google.com/macros/s/AKfycbwC_5Tw6oOWm3JmGu7jYnuQAfci1lxoxc6uZ4jQI_x8IpadNy5JwymBRpphzBvsyXxT/exec",control_id:"Control 1A",control_tema:"Método Científico"};
-const preguntas=[{"texto": "Un estudiante observa que las plantas de su jardín crecen más cerca de la ventana. Formula la siguiente afirmación: «A mayor cantidad de luz solar, mayor crecimiento de las plantas». ¿Qué tipo de enunciado científico es este?", "formula": null, "opciones": ["Una ley científica", "Una teoría científica", "Una hipótesis", "Una conclusión definitiva"], "correcta": 2, "label": "Hipótesis, teoría y ley", "fb_ok": "Correcto. Una hipótesis es una explicación tentativa y comprobable de una observación. Está sujeta a cambios según los resultados experimentales.", "fb_mal": "Este enunciado es una hipótesis: una explicación tentativa y comprobable. No es una ley (que describe patrones matemáticos) ni una teoría (que requiere múltiple evidencia acumulada)."}, {"texto": "¿Cuál de las siguientes afirmaciones describe correctamente la diferencia entre una teoría científica y una ley científica?", "formula": null, "opciones": ["La teoría es una ley que ha sido probada muchas veces", "La ley describe qué ocurre; la teoría explica por qué ocurre", "La ley es más importante que la teoría en la jerarquía científica", "La teoría se transforma en ley cuando tiene suficiente evidencia"], "correcta": 1, "label": "Teoría vs. ley", "fb_ok": "Correcto. La ley describe un patrón (qué ocurre), mientras que la teoría explica el mecanismo (por qué ocurre). No hay jerarquía entre ellas.", "fb_mal": "La teoría y la ley no se transforman una en la otra. La ley describe qué ocurre (patrón matemático); la teoría explica por qué ocurre. No hay jerarquía entre ellas."}, {"texto": "En un experimento se estudia cómo la temperatura del agua afecta el tiempo de disolución del azúcar. Se usa siempre la misma cantidad de azúcar y el mismo agitador. ¿Cuál es la variable independiente?", "formula": null, "opciones": ["El tiempo de disolución", "La cantidad de azúcar", "La temperatura del agua", "El tipo de agitador"], "correcta": 2, "label": "Variables experimentales", "fb_ok": "Correcto. La variable independiente es la que el investigador manipula deliberadamente. En este caso, se cambia la temperatura para ver su efecto.", "fb_mal": "La variable independiente es la que el investigador manipula: la temperatura del agua. El tiempo de disolución es la variable dependiente (lo que se mide). El azúcar y el agitador son variables controladas."}, {"texto": "El número 0,0000000543 expresado en notación científica es:", "formula": "a × 10ⁿ, con 1 ≤ a < 10", "opciones": ["5,43 × 10⁻⁸", "5,43 × 10⁸", "0,543 × 10⁻⁷", "54,3 × 10⁻⁹"], "correcta": 0, "label": "Notación científica", "fb_ok": "Correcto. Se mueve la coma 8 lugares hacia la derecha para obtener 5,43, por lo que el exponente es −8.", "fb_mal": "Para expresar 0,0000000543 en notación científica: se mueve la coma 8 lugares a la derecha → 5,43. Como se movió a la derecha, el exponente es negativo: 5,43 × 10⁻⁸."}, {"texto": "Un gráfico de «distancia recorrida vs. tiempo» muestra una línea recta que pasa por el origen. ¿Qué relación describe entre ambas variables?", "formula": null, "opciones": ["Relación proporcional inversa", "Relación cuadrática", "Relación proporcional directa", "No existe relación entre las variables"], "correcta": 2, "label": "Gráficos experimentales", "fb_ok": "Correcto. Una línea recta que pasa por el origen indica proporcionalidad directa: y = kx. Cuando x duplica, y también duplica.", "fb_mal": "Una línea recta que pasa por el origen es la firma de una relación proporcional directa (y = kx). Una hipérbola indicaría proporcional inversa; una parábola, relación cuadrática."}];
-let rut="",actual=0,elegidas=new Array(preguntas.length).fill(null);
-const letras=["A","B","C","D"];
-document.getElementById('rut-input').addEventListener('input',function(e){e.target.value=e.target.value.replace(/\D/g,'')});
-document.getElementById('rut-input').addEventListener('keydown',function(e){if(e.key==='Enter')startQuiz()});
-function startQuiz(){const val=document.getElementById('rut-input').value.trim();const err=document.getElementById('rut-error');if(val.length<7){err.style.display='block';return}err.style.display='none';rut=val;document.getElementById('screen-rut').style.display='none';document.getElementById('screen-quiz').style.display='block';renderPregunta()}
-function renderPregunta(){const q=preguntas[actual];document.getElementById('prog').style.width=((actual/preguntas.length)*100)+'%';document.getElementById('prog-label').textContent=(actual+1)+' / '+preguntas.length;document.getElementById('aviso').style.display='none';const formula=q.formula?`<div class="q-formula">${q.formula}</div>`:'';const opts=q.opciones.map((o,i)=>{const sel=elegidas[actual]===i?'selected':'';return`<div class="opt ${sel}" id="opt-${i}" onclick="elegir(${i})"><div class="opt-circle">${letras[i]}</div><div class="opt-text">${o}</div></div>`}).join('');document.getElementById('question-card').innerHTML=`<div class="q-meta"><div class="q-num">Pregunta ${actual+1} de ${preguntas.length}</div><div class="q-tag">${q.label}</div></div><div class="q-text">${q.texto}</div>${formula}<div class="options">${opts}</div>`;document.getElementById('nav-btn').innerHTML=`<button class="btn" onclick="siguiente()">${actual===preguntas.length-1?'Ver mis resultados →':'Siguiente →'}</button>`}
-function elegir(idx){elegidas[actual]=idx;document.querySelectorAll('.opt').forEach((o,i)=>o.classList.toggle('selected',i===idx));document.getElementById('aviso').style.display='none'}
-function siguiente(){if(elegidas[actual]===null){document.getElementById('aviso').style.display='block';return}actual++;if(actual>=preguntas.length)mostrarResultados();else renderPregunta()}
-function mostrarResultados(){document.getElementById('screen-quiz').style.display='none';document.getElementById('screen-results').style.display='block';let correctas=0;preguntas.forEach(function(q,i){if(elegidas[i]===q.correcta)correctas++});const pct=Math.round((correctas/preguntas.length)*100);document.getElementById('score-num').textContent=pct+'%';document.getElementById('score-sub').textContent=correctas+' de '+preguntas.length+' preguntas correctas';document.getElementById('st-v').textContent=correctas;document.getElementById('st-r').textContent=preguntas.length-correctas;document.getElementById('st-p').textContent=correctas+'/'+preguntas.length;const detalle=preguntas.map(function(q,i){const ok=elegidas[i]===q.correcta;const cls=ok?'ok':'bad';const elegidaTexto=`Tu respuesta: ${letras[elegidas[i]]}. ${q.opciones[elegidas[i]]}`;const correctaTexto=`Correcta: ${letras[q.correcta]}. ${q.opciones[q.correcta]}`;const cuerpo=ok?`<div class="detalle-body">${q.fb_ok}</div>`:`<div class="detalle-body"><div class="detalle-elegida">✗ ${elegidaTexto}</div><div class="detalle-correcta">✓ ${correctaTexto}</div>${q.fb_mal}</div>`;return`<div class="detalle-item"><div class="detalle-header ${cls}"><div class="detalle-icono ${cls}">${ok?'✓':'✗'}</div><div class="detalle-label ${cls}">P${i+1} — ${q.label}</div></div>${cuerpo}</div>`}).join('');document.getElementById('detalle-items').innerHTML=detalle;enviarSheet(correctas,pct)}
-function enviarSheet(correctas,pct){const badge=document.getElementById('sync-badge');if(!CONFIG.sheet_url)return;badge.className='sync-badge show';badge.textContent='⏳ Guardando resultado...';const params=new URLSearchParams({control_id:CONFIG.control_id,control_tema:CONFIG.control_tema,rut:rut,fecha:new Date().toLocaleString('es-CL'),correctas:correctas,total:preguntas.length,porcentaje:pct});const url=CONFIG.sheet_url+'?'+params.toString();const img=new Image();img.onload=img.onerror=function(){badge.textContent='✓ Resultado guardado'};img.src=url}
-function restart(){actual=0;elegidas=new Array(preguntas.length).fill(null);document.getElementById('screen-results').style.display='none';document.getElementById('screen-quiz').style.display='block';renderPregunta()}
+/* ══ CONFIGURACIÓN ══
+   Reemplaza sheet_url con la URL que obtengas al publicar el Apps Script.
+   No cambies nada más. */
+const CONFIG = {
+  sheet_url:    "https://script.google.com/macros/s/AKfycbwC_5Tw6oOWm3JmGu7jYnuQAfci1lxoxc6uZ4jQI_x8IpadNy5JwymBRpphzBvsyXxT/exec",
+  control_id:   "Control 1A",
+  control_tema: "Método Científico"
+};
+
+/* ══ PREGUNTAS ══ */
+const preguntas = [
+  {
+    texto: "Un estudiante observa que las plantas de su jardín crecen más cerca de la ventana. Formula la siguiente afirmación: «A mayor cantidad de luz solar, mayor crecimiento de las plantas». ¿Qué tipo de enunciado científico es este?",
+    formula: null,
+    opciones: ["Una ley científica","Una teoría científica","Una hipótesis","Una conclusión definitiva"],
+    correcta: 2,
+    label: "Hipótesis, teoría y ley",
+    fb_ok: "Correcto. Una hipótesis es una explicación tentativa y comprobable de una observación. Está sujeta a cambios según los resultados experimentales.",
+    fb_mal: "Este enunciado es una hipótesis: una explicación tentativa y comprobable. No es una ley (que describe patrones matemáticos) ni una teoría (que requiere múltiple evidencia acumulada)."
+  },
+  {
+    texto: "¿Cuál de las siguientes afirmaciones describe correctamente la diferencia entre una teoría científica y una ley científica?",
+    formula: null,
+    opciones: ["La teoría es una ley que ha sido probada muchas veces","La ley describe qué ocurre; la teoría explica por qué ocurre","La ley es más importante que la teoría en la jerarquía científica","La teoría se transforma en ley cuando tiene suficiente evidencia"],
+    correcta: 1,
+    label: "Teoría vs. ley",
+    fb_ok: "Correcto. La ley describe un patrón (qué ocurre), mientras que la teoría explica el mecanismo (por qué ocurre). No hay jerarquía entre ellas.",
+    fb_mal: "La teoría y la ley no se transforman una en la otra. La ley describe qué ocurre (patrón matemático); la teoría explica por qué ocurre. No hay jerarquía entre ellas."
+  },
+  {
+    texto: "En un experimento se estudia cómo la temperatura del agua afecta el tiempo de disolución del azúcar. Se usa siempre la misma cantidad de azúcar y el mismo agitador. ¿Cuál es la variable independiente?",
+    formula: null,
+    opciones: ["El tiempo de disolución","La cantidad de azúcar","La temperatura del agua","El tipo de agitador"],
+    correcta: 2,
+    label: "Variables experimentales",
+    fb_ok: "Correcto. La variable independiente es la que el investigador manipula deliberadamente. En este caso, se cambia la temperatura para ver su efecto.",
+    fb_mal: "La variable independiente es la que el investigador manipula: la temperatura del agua. El tiempo de disolución es la variable dependiente (lo que se mide). El azúcar y el agitador son variables controladas."
+  },
+  {
+    texto: "El número 0,0000000543 expresado en notación científica es:",
+    formula: "a × 10ⁿ, con 1 ≤ a < 10",
+    opciones: ["5,43 × 10⁻⁸","5,43 × 10⁸","0,543 × 10⁻⁷","54,3 × 10⁻⁹"],
+    correcta: 0,
+    label: "Notación científica",
+    fb_ok: "Correcto. Se mueve la coma 8 lugares hacia la derecha para obtener 5,43, por lo que el exponente es −8.",
+    fb_mal: "Para expresar 0,0000000543 en notación científica: se mueve la coma 8 lugares a la derecha → 5,43. Como se movió a la derecha, el exponente es negativo: 5,43 × 10⁻⁸."
+  },
+  {
+    texto: "Un gráfico de «distancia recorrida vs. tiempo» muestra una línea recta que pasa por el origen. ¿Qué relación describe entre ambas variables?",
+    formula: null,
+    opciones: ["Relación proporcional inversa","Relación cuadrática","Relación proporcional directa","No existe relación entre las variables"],
+    correcta: 2,
+    label: "Gráficos experimentales",
+    fb_ok: "Correcto. Una línea recta que pasa por el origen indica proporcionalidad directa: y = kx. Cuando x duplica, y también duplica.",
+    fb_mal: "Una línea recta que pasa por el origen es la firma de una relación proporcional directa (y = kx). Una hipérbola indicaría proporcional inversa; una parábola, relación cuadrática."
+  }
+];
+
+/* ══ ESTADO ══ */
+let rut = "";
+let actual = 0;
+let elegidas = new Array(preguntas.length).fill(null);
+const letras = ["A","B","C","D"];
+
+/* ══ PANTALLA RUT ══ */
+document.getElementById('rut-input').addEventListener('input', function(e) {
+  e.target.value = e.target.value.replace(/\D/g, '');
+});
+document.getElementById('rut-input').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') startQuiz();
+});
+
+function validarRut() {
+  const val = document.getElementById('rut-input').value.trim();
+  const err = document.getElementById('rut-error');
+  if (val.length < 7) { err.style.display = 'block'; return null; }
+  err.style.display = 'none';
+  return val;
+}
+
+function startQuiz() {
+  const val = validarRut();
+  if (!val) return;
+  rut = val;
+  actual = 0;
+  elegidas = new Array(preguntas.length).fill(null);
+  document.getElementById('screen-rut').style.display = 'none';
+  document.getElementById('screen-quiz').style.display = 'block';
+  renderPregunta();
+}
+
+/* ══ QUIZ ══ */
+function renderPregunta() {
+  const q = preguntas[actual];
+  document.getElementById('prog').style.width = ((actual / preguntas.length) * 100) + '%';
+  document.getElementById('prog-label').textContent = (actual + 1) + ' / ' + preguntas.length;
+  document.getElementById('aviso').style.display = 'none';
+  const formula = q.formula ? `<div class="q-formula">${q.formula}</div>` : '';
+  const opts = q.opciones.map((o, i) => {
+    const sel = elegidas[actual] === i ? 'selected' : '';
+    return `<div class="opt ${sel}" id="opt-${i}" onclick="elegir(${i})">
+              <div class="opt-circle">${letras[i]}</div>
+              <div class="opt-text">${o}</div>
+            </div>`;
+  }).join('');
+  document.getElementById('question-card').innerHTML =
+    `<div class="q-meta">
+       <div class="q-num">Pregunta ${actual + 1} de ${preguntas.length}</div>
+       <div class="q-tag">${q.label}</div>
+     </div>
+     <div class="q-text">${q.texto}</div>
+     ${formula}
+     <div class="options">${opts}</div>`;
+  document.getElementById('nav-btn').innerHTML =
+    `<button class="btn" onclick="siguiente()">
+       ${actual === preguntas.length - 1 ? 'Ver mis resultados →' : 'Siguiente →'}
+     </button>`;
+}
+
+function elegir(idx) {
+  elegidas[actual] = idx;
+  document.querySelectorAll('.opt').forEach((o, i) => o.classList.toggle('selected', i === idx));
+  document.getElementById('aviso').style.display = 'none';
+}
+
+function siguiente() {
+  if (elegidas[actual] === null) { document.getElementById('aviso').style.display = 'block'; return; }
+  actual++;
+  if (actual >= preguntas.length) mostrarResultados();
+  else renderPregunta();
+}
+
+/* ══ RESULTADOS ══ */
+function mostrarResultados() {
+  document.getElementById('screen-quiz').style.display = 'none';
+  document.getElementById('screen-results').style.display = 'block';
+  let correctas = 0;
+  preguntas.forEach((q, i) => { if (elegidas[i] === q.correcta) correctas++; });
+  const pct = Math.round((correctas / preguntas.length) * 100);
+  document.getElementById('score-num').textContent = pct + '%';
+  document.getElementById('score-sub').textContent = correctas + ' de ' + preguntas.length + ' preguntas correctas';
+  document.getElementById('st-v').textContent = correctas;
+  document.getElementById('st-r').textContent = preguntas.length - correctas;
+  document.getElementById('st-p').textContent = correctas + '/' + preguntas.length;
+  const detalle = preguntas.map((q, i) => {
+    const ok = elegidas[i] === q.correcta;
+    const cls = ok ? 'ok' : 'bad';
+    const elegidaTexto = `Tu respuesta: ${letras[elegidas[i]]}. ${q.opciones[elegidas[i]]}`;
+    const correctaTexto = `Correcta: ${letras[q.correcta]}. ${q.opciones[q.correcta]}`;
+    const cuerpo = ok
+      ? `<div class="detalle-body">${q.fb_ok}</div>`
+      : `<div class="detalle-body">
+           <div class="detalle-elegida">✗ ${elegidaTexto}</div>
+           <div class="detalle-correcta">✓ ${correctaTexto}</div>
+           ${q.fb_mal}
+         </div>`;
+    return `<div class="detalle-item">
+              <div class="detalle-header ${cls}">
+                <div class="detalle-icono ${cls}">${ok ? '✓' : '✗'}</div>
+                <div class="detalle-label ${cls}">P${i + 1} — ${q.label}</div>
+              </div>${cuerpo}
+            </div>`;
+  }).join('');
+  document.getElementById('detalle-items').innerHTML = detalle;
+  enviarSheet(correctas, pct);
+}
+
+function restart() {
+  actual = 0;
+  elegidas = new Array(preguntas.length).fill(null);
+  document.getElementById('screen-results').style.display = 'none';
+  document.getElementById('screen-quiz').style.display = 'block';
+  renderPregunta();
+}
+
+/* ══ GUARDAR EN SHEETS ══ */
+function enviarSheet(correctas, pct) {
+  const badge = document.getElementById('sync-badge');
+  if (!CONFIG.sheet_url) return;
+  badge.className = 'sync-badge show';
+  badge.textContent = '⏳ Guardando resultado...';
+  const params = new URLSearchParams({
+    modo:         'guardar',
+    control_id:   CONFIG.control_id,
+    control_tema: CONFIG.control_tema,
+    rut:          rut,
+    fecha:        new Date().toLocaleString('es-CL'),
+    correctas:    correctas,
+    total:        preguntas.length,
+    porcentaje:   pct
+  });
+  fetch(CONFIG.sheet_url + '?' + params.toString())
+    .then(r => r.json())
+    .then(d => { badge.textContent = d.ok ? '✓ Resultado guardado' : '⚠ No se pudo guardar'; })
+    .catch(() => { badge.textContent = '⚠ Sin conexión'; });
+}
+
+/* ══ HISTORIAL DEL ALUMNO ══ */
+function verHistorial() {
+  const val = validarRut();
+  if (!val) return;
+  rut = val;
+  mostrarPantallaHistorial();
+  cargarHistorial();
+}
+
+function irAHistorial() {
+  document.getElementById('screen-results').style.display = 'none';
+  mostrarPantallaHistorial();
+  cargarHistorial();
+}
+
+function mostrarPantallaHistorial() {
+  document.getElementById('screen-rut').style.display = 'none';
+  document.getElementById('screen-results').style.display = 'none';
+  document.getElementById('screen-quiz').style.display = 'none';
+  document.getElementById('screen-historial').style.display = 'block';
+  document.getElementById('hist-rut-label').textContent = 'RUT: ' + rut;
+  document.getElementById('hist-loading').style.display = 'block';
+  document.getElementById('hist-error').style.display = 'none';
+  document.getElementById('hist-tabla').innerHTML = '';
+  document.getElementById('hist-stats').innerHTML = '';
+  document.getElementById('hist-subtitulo').style.display = 'none';
+}
+
+function cargarHistorial() {
+  fetch(CONFIG.sheet_url + '?modo=historial&rut=' + rut)
+    .then(r => r.json())
+    .then(data => {
+      document.getElementById('hist-loading').style.display = 'none';
+      if (!data.ok || !data.filas || data.filas.length === 0) {
+        document.getElementById('hist-error').style.display = 'block';
+        document.getElementById('hist-error').textContent = 'No se encontraron registros para este RUT. ¿Aún no has rendido ningún control?';
+        return;
+      }
+      renderHistorial(data.filas);
+    })
+    .catch(() => {
+      document.getElementById('hist-loading').style.display = 'none';
+      document.getElementById('hist-error').style.display = 'block';
+      document.getElementById('hist-error').textContent = '⚠ Error de conexión. Intenta más tarde.';
+    });
+}
+
+function normalizarPct(val) {
+  // Acepta: "0.6", "60", "60%", 0.6, 60
+  var n = parseFloat(String(val).replace('%',''));
+  if (n <= 1) n = Math.round(n * 100); // formato decimal → porcentaje
+  return Math.round(n);
+}
+
+function renderHistorial(filas) {
+  const total = filas.length;
+  const pcts = filas.map(f => normalizarPct(f.porcentaje));
+  const prom = pcts.reduce((a, v) => a + v, 0) / total;
+  const mejor = Math.max(...pcts);
+  document.getElementById('hist-stats').innerHTML =
+    `<div class="stat-box"><div class="val">${total}</div><div class="lbl">Intentos</div></div>
+     <div class="stat-box"><div class="val">${Math.round(prom)}%</div><div class="lbl">Promedio</div></div>
+     <div class="stat-box"><div class="val">${mejor}%</div><div class="lbl">Mejor nota</div></div>`;
+  document.getElementById('hist-subtitulo').style.display = 'block';
+  const filasInv = filas.slice().reverse();
+  document.getElementById('hist-tabla').innerHTML = filasInv.map(f => {
+    const pct = normalizarPct(f.porcentaje);
+    const cls = pct >= 60 ? 'ok' : 'bad';
+    return `<div class="detalle-item">
+              <div class="detalle-header ${cls}">
+                <div class="detalle-icono ${cls}">${pct >= 60 ? '✓' : '✗'}</div>
+                <div class="detalle-label ${cls}">${f.control} — ${f.tema}</div>
+                <div class="hist-pct">${pct}%</div>
+              </div>
+              <div class="detalle-body">
+                ${f.correctas} de ${f.total} correctas · ${f.fecha}
+              </div>
+            </div>`;
+  }).join('');
+}
+
+function volverInicio() {
+  document.getElementById('screen-historial').style.display = 'none';
+  document.getElementById('screen-rut').style.display = 'block';
+}
 </script>
 </body>
 </html>
