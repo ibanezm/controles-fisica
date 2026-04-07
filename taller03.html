@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Taller 3 · Cinemática · Preuniversitario UV</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+  :root{--azul:#1a56db;--azul-claro:#ebf0ff;--verde:#057a55;--verde-claro:#e3fcef;--rojo:#c81e1e;--rojo-claro:#fde8e8;--gris-bg:#f8f9fa;--gris-borde:#e2e8f0;--gris-texto:#64748b;--negro:#0f172a;--blanco:#ffffff;--radio:10px}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'IBM Plex Sans',sans-serif;background:var(--gris-bg);color:var(--negro);min-height:100vh;padding:1.5rem 1rem 3rem}
+  .container{max-width:620px;margin:0 auto}
+  .header{text-align:center;margin-bottom:2rem}
+  .header .tag{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--azul);background:var(--azul-claro);padding:4px 12px;border-radius:20px;margin-bottom:10px}
+  .header h1{font-size:22px;font-weight:600;margin-bottom:4px}
+  .header p{font-size:13px;color:var(--gris-texto)}
+  .progress-wrap{display:flex;align-items:center;gap:10px;margin-bottom:1.5rem}
+  .progress-track{flex:1;height:5px;background:var(--gris-borde);border-radius:10px;overflow:hidden}
+  .progress-fill{height:100%;background:var(--azul);border-radius:10px;transition:width .4s ease;width:0%}
+  .progress-label{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--gris-texto);white-space:nowrap}
+  .card{background:var(--blanco);border:1px solid var(--gris-borde);border-radius:var(--radio);padding:1.5rem;margin-bottom:1rem}
+  .rut-wrap{text-align:center}
+  .rut-icon{width:56px;height:56px;background:var(--azul-claro);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:26px}
+  .rut-wrap h2{font-size:17px;font-weight:600;margin-bottom:6px}
+  .rut-wrap p{font-size:13px;color:var(--gris-texto);margin-bottom:1.5rem;line-height:1.6}
+  .rut-input{width:100%;padding:12px 16px;font-size:20px;font-family:'IBM Plex Mono',monospace;border:1.5px solid var(--gris-borde);border-radius:var(--radio);text-align:center;letter-spacing:.05em;outline:none;transition:border-color .2s;margin-bottom:6px}
+  .rut-input:focus{border-color:var(--azul)}
+  .rut-hint{font-size:11px;color:var(--gris-texto);margin-bottom:1.25rem}
+  .rut-error{font-size:12px;color:var(--rojo);margin-bottom:.75rem;display:none}
+  .btn{width:100%;padding:13px;background:var(--azul);color:white;font-family:'IBM Plex Sans',sans-serif;font-size:15px;font-weight:500;border:none;border-radius:var(--radio);cursor:pointer;transition:opacity .2s,transform .1s}
+  .btn:hover{opacity:.9}
+  .btn:active{transform:scale(.98)}
+  .btn-outline{background:transparent;color:var(--azul);border:1.5px solid var(--azul);margin-top:10px}
+  .btn-outline:hover{background:var(--azul-claro)}
+  .q-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+  .q-num{font-size:12px;font-weight:600;color:var(--azul);text-transform:uppercase;letter-spacing:.06em}
+  .q-tag{font-size:11px;color:var(--gris-texto);background:var(--gris-bg);padding:3px 8px;border-radius:20px}
+  .q-text{font-size:16px;font-weight:500;line-height:1.55;margin-bottom:1rem}
+  .q-formula{font-family:'IBM Plex Mono',monospace;font-size:14px;color:var(--azul);background:var(--azul-claro);padding:8px 14px;border-radius:8px;display:inline-block;margin-bottom:1rem}
+  .options{display:flex;flex-direction:column;gap:8px}
+  .opt{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border:1.5px solid var(--gris-borde);border-radius:var(--radio);cursor:pointer;transition:all .15s;background:var(--blanco);-webkit-tap-highlight-color:transparent}
+  .opt:hover{border-color:var(--azul);background:var(--azul-claro)}
+  .opt.selected{border-color:var(--azul);background:var(--azul-claro)}
+  .opt.disabled{pointer-events:none}
+  .opt-circle{width:28px;height:28px;min-width:28px;border-radius:50%;border:1.5px solid var(--gris-borde);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--gris-texto);transition:all .15s;margin-top:1px}
+  .opt.selected .opt-circle{background:var(--azul);border-color:var(--azul);color:white}
+  .opt.correct{border-color:var(--verde);background:var(--verde-claro)}
+  .opt.wrong{border-color:var(--rojo);background:var(--rojo-claro)}
+  .opt.show-correct{border-color:var(--verde);background:var(--verde-claro);opacity:.65}
+  .opt.correct .opt-circle{background:var(--verde);border-color:var(--verde);color:white}
+  .opt.wrong .opt-circle{background:var(--rojo);border-color:var(--rojo);color:white}
+  .opt-text{font-size:14px;line-height:1.45}
+  .aviso{font-size:12px;color:var(--rojo);margin-top:8px;display:none}
+  .nav{margin-top:1rem}
+  .score-card{background:#1e3a5f;color:white;border-radius:var(--radio);padding:1.5rem;text-align:center;margin-bottom:1rem}
+  .score-label{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#93b4d4;margin-bottom:4px}
+  .score-num{font-size:56px;font-weight:600;font-family:'IBM Plex Mono',monospace;line-height:1;margin-bottom:4px;color:#e8f1fb}
+  .score-sub{font-size:13px;color:#93b4d4}
+  .stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1.25rem}
+  .stat-box{background:var(--gris-bg);border-radius:8px;padding:12px 8px;text-align:center}
+  .stat-box .val{font-size:20px;font-weight:600;color:var(--negro)}
+  .stat-box .lbl{font-size:11px;color:var(--gris-texto);margin-top:2px}
+  .detalle-titulo{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--gris-texto);margin-bottom:10px}
+  .detalle-item{border:1px solid var(--gris-borde);border-radius:var(--radio);margin-bottom:8px;overflow:hidden}
+  .detalle-header{display:flex;align-items:center;gap:10px;padding:10px 14px}
+  .detalle-header.ok{background:var(--verde-claro)}
+  .detalle-header.bad{background:var(--rojo-claro)}
+  .detalle-icono{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+  .detalle-icono.ok{background:var(--verde);color:white}
+  .detalle-icono.bad{background:var(--rojo);color:white}
+  .detalle-label{font-size:13px;font-weight:500}
+  .detalle-label.ok{color:#065f46}
+  .detalle-label.bad{color:#7f1d1d}
+  .detalle-body{padding:10px 14px;font-size:13px;line-height:1.6;color:var(--gris-texto);border-top:1px solid var(--gris-borde)}
+  .detalle-elegida{font-size:12px;color:var(--rojo);margin-bottom:4px}
+  .detalle-correcta{font-size:12px;color:var(--verde);margin-bottom:6px}
+  .detalle-tip{margin-top:8px;padding:8px 10px;background:#fef9e7;border-left:3px solid #d48b00;border-radius:4px;font-size:12px;color:#92400e}
+  .sync-badge{display:none;text-align:center;font-size:12px;padding:6px 0;color:var(--gris-texto);margin-bottom:1rem}
+  .sync-badge.show{display:block}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="tag">Preuniversitario UV · Física</div>
+    <h1>Taller 3 — Cinemática</h1>
+    <p>30 preguntas tipo PAES · sin nota · feedback inmediato</p>
+  </div>
+
+  <!-- PANTALLA DE RUT -->
+  <div id="screen-rut">
+    <div class="card">
+      <div class="rut-wrap">
+        <div class="rut-icon">🎧</div>
+        <h2>Ingresa tu RUT</h2>
+        <p>Para llevar seguimiento de tu progreso durante el semestre.<br>Sin puntos ni guión, solo números.</p>
+        <input type="tel" class="rut-input" id="rut-input" placeholder="12345678" maxlength="9" inputmode="numeric">
+        <div class="rut-hint">Ej: si tu RUT es 12.345.678-9 → escribe 12345678</div>
+        <div class="rut-error" id="rut-error">⚠ Ingresa al menos 7 dígitos</div>
+        <button class="btn" onclick="startQuiz()">Comenzar →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANTALLA DE PREGUNTAS -->
+  <div id="screen-quiz" style="display:none;">
+    <div class="progress-wrap">
+      <div class="progress-track"><div class="progress-fill" id="prog"></div></div>
+      <div class="progress-label" id="prog-label">1 / 30</div>
+    </div>
+    <div class="card" id="question-card"></div>
+    <div class="aviso" id="aviso">Debes seleccionar una opción para continuar.</div>
+    <div class="nav" id="nav-btn"></div>
+  </div>
+
+  <!-- PANTALLA DE RESULTADOS -->
+  <div id="screen-results" style="display:none;">
+    <div class="score-card">
+      <div class="score-label">Resultado</div>
+      <div class="score-num" id="score-num">—</div>
+      <div class="score-sub" id="score-sub">—</div>
+    </div>
+    <div class="card">
+      <div class="stats-grid">
+        <div class="stat-box"><div class="val" id="st-v">0</div><div class="lbl">Correctas</div></div>
+        <div class="stat-box"><div class="val" id="st-r">0</div><div class="lbl">Incorrectas</div></div>
+        <div class="stat-box"><div class="val" id="st-p">0/30</div><div class="lbl">Puntaje</div></div>
+      </div>
+      <div class="sync-badge" id="sync-badge"></div>
+      <div class="detalle-titulo">Revisión pregunta a pregunta</div>
+      <div id="detalle-items"></div>
+      <button class="btn btn-outline" onclick="restart()">Volver a intentar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// CONFIGURACIÓN — REEMPLAZA TU_URL_AQUI con la URL de tu Apps Script
+// ═══════════════════════════════════════════════════════════════
+const CONFIG = {
+    sheet_url: "https://script.google.com/macros/s/AKfycbwC_5Tw6oOWm3JmGu7jYnuQAfci1lxoxc6uZ4jQI_x8IpadNy5JwymBRpphzBvsyXxT/exec",
+    control_id: "Taller 3",
+    control_tema: "Cinemática"
+};
+
+// ═══════════════════════════════════════════════════════════════
+// BANCO DE 30 PREGUNTAS (Capítulos 5 y 6:)
+// ═══════════════════════════════════════════════════════════════
+
+const preguntas = [
+  // ==================== CINEMÁTICA (30 preguntas - 60% PAES reales) ====================
+  
+  // === PREGUNTAS PAES REALES (adaptadas sin calculadora) ===
+  {
+    "texto": "Un objeto parte desde el origen, avanza 10 m hacia la derecha y luego retrocede 4 m hacia la izquierda. ¿Cuáles son la distancia recorrida y el módulo del desplazamiento?",
+    "formula": null,
+    "opciones": ["14 m y 6 m", "6 m y 14 m", "14 m y 14 m", "10 m y 4 m"],
+    "correcta": 0,
+    "label": "Desplazamiento vs distancia",
+    "fb_ok": "Correcto. Distancia = 10 + 4 = 14 m. Desplazamiento = 10 - 4 = 6 m.",
+    "fb_mal": "Error común: sumar ambas distancias para el desplazamiento. El desplazamiento es la diferencia entre posición final e inicial.",
+    "tip": "Distancia = camino recorrido (siempre positiva). Desplazamiento = posición final - inicial (puede ser negativo o cero).",
+    "fuente": "PAES 2023"
+  },
+  {
+    "texto": "El siguiente gráfico x-t corresponde al movimiento de un objeto:\n\n(desde t=0 a t=2: posición aumenta de 0 a 8 m; t=2 a t=4: posición constante en 8 m; t=4 a t=6: posición disminuye de 8 m a 0 m)\n\n¿En qué tramo(s) el cuerpo está en reposo?",
+    "formula": null,
+    "opciones": ["Solo en el tramo I (0-2 s)", "Solo en el tramo II (2-4 s)", "Solo en el tramo III (4-6 s)", "En los tramos I y III"],
+    "correcta": 1,
+    "label": "Gráficos x-t",
+    "fb_ok": "Correcto. En el tramo II la posición es constante (8 m), por lo tanto la velocidad es nula → reposo.",
+    "fb_mal": "Error: confundir pendiente positiva/negativa con reposo. Reposo = posición constante.",
+    "tip": "En un gráfico x-t, reposo = línea horizontal.",
+    "fuente": "PAES 2024"
+  },
+  {
+    "texto": "Un auto viaja a 90 km/h. ¿Cuánto es esto en m/s?",
+    "formula": "km/h → m/s: dividir por 3,6",
+    "opciones": ["9 m/s", "15 m/s", "25 m/s", "32,4 m/s"],
+    "correcta": 2,
+    "label": "Conversión de unidades",
+    "fb_ok": "Correcto. 90 ÷ 3,6 = 25 m/s.",
+    "fb_mal": "Error: multiplicar por 3,6 en lugar de dividir (daría 324 m/s).",
+    "tip": "km/h → m/s = ÷ 3,6. m/s → km/h = × 3,6.",
+    "fuente": "PAES 2023"
+  },
+  {
+    "texto": "Un tren avanza a 30 m/s respecto al suelo. Un pasajero camina hacia atrás del tren a 2 m/s respecto al tren. ¿Cuál es la velocidad del pasajero respecto al suelo?",
+    "formula": "v = v_tren + v_pasajero",
+    "opciones": ["32 m/s", "28 m/s", "2 m/s", "60 m/s"],
+    "correcta": 1,
+    "label": "Relatividad de Galileo",
+    "fb_ok": "Correcto. v = 30 + (-2) = 28 m/s.",
+    "fb_mal": "Error: sumar sin signo: 30 + 2 = 32 m/s.",
+    "tip": "Velocidades en la misma dirección: si van en sentido contrario, una es negativa.",
+    "fuente": "PAES 2024"
+  },
+  {
+    "texto": "Un objeto se lanza verticalmente hacia arriba con velocidad inicial de 20 m/s (g = 10 m/s²). ¿Cuánto tarda en volver al punto de lanzamiento?",
+    "formula": "t_total = 2·v₀/g",
+    "opciones": ["2 s", "3 s", "4 s", "5 s"],
+    "correcta": 2,
+    "label": "Caída libre",
+    "fb_ok": "Correcto. t_subida = v₀/g = 20/10 = 2 s. t_total = 2 × 2 = 4 s.",
+    "fb_mal": "Error: calcular solo el tiempo de subida (2 s) y olvidar la bajada.",
+    "tip": "Tiempo total de vuelo = 2·v₀/g. Altura máxima = v₀²/2g.",
+    "fuente": "PAES 2023"
+  },
+  {
+    "texto": "En el gráfico v-t de un cuerpo se observa una recta que va desde v = 10 m/s en t = 0 hasta v = 0 en t = 5 s. ¿Qué afirmaciones son correctas?\n\nI. La aceleración es -2 m/s².\nII. El desplazamiento es 25 m.\nIII. El movimiento es MRU.",
+    "formula": null,
+    "opciones": ["Solo I", "Solo I y II", "Solo II y III", "I, II y III"],
+    "correcta": 1,
+    "label": "Gráficos v-t",
+    "fb_ok": "Correcto. I: a = (0-10)/5 = -2 m/s². II: área = (10×5)/2 = 25 m. III: Falso, hay aceleración → MRUA.",
+    "fb_mal": "Error: pensar que recta inclinada en v-t es MRU (es MRUA). MRU en v-t es horizontal.",
+    "tip": "Pendiente en v-t = aceleración. Área bajo v-t = desplazamiento.",
+    "fuente": "PAES 2024"
+  },
+  {
+    "texto": "Dos móviles parten simultáneamente en la misma dirección desde el mismo punto. A tiene velocidad constante de 10 m/s; B parte del reposo con aceleración de 2 m/s². ¿En qué instante B alcanza a A?",
+    "formula": "x_A = x_B → 10t = ½·2·t²",
+    "opciones": ["5 s", "10 s", "15 s", "20 s"],
+    "correcta": 1,
+    "label": "MRU vs MRUA",
+    "fb_ok": "Correcto. 10t = t² → t(t - 10) = 0 → t = 10 s (t=0 es la partida).",
+    "fb_mal": "Error: igualar velocidades en lugar de posiciones (daría t=5 s).",
+    "tip": "Para el encuentro, iguala POSICIONES, no velocidades.",
+    "fuente": "PAES 2025"
+  },
+  {
+    "texto": "¿Cuál de las siguientes es una magnitud escalar?",
+    "formula": null,
+    "opciones": ["Desplazamiento", "Velocidad instantánea", "Aceleración", "Distancia recorrida"],
+    "correcta": 3,
+    "label": "Magnitudes escalares",
+    "fb_ok": "Correcto. La distancia recorrida es escalar (solo valor). Las demás son vectoriales.",
+    "fb_mal": "Error: confundir desplazamiento (vectorial) con distancia (escalar).",
+    "tip": "Escalar = solo valor + unidad. Vectorial = valor + dirección + sentido.",
+    "fuente": "PAES 2023"
+  },
+  {
+    "texto": "Un auto parte del reposo con aceleración constante de 3 m/s². ¿Cuál es su velocidad a los 6 s y qué distancia recorrió?",
+    "formula": "v = a·t, x = ½·a·t²",
+    "opciones": ["9 m/s y 27 m", "18 m/s y 54 m", "18 m/s y 108 m", "9 m/s y 54 m"],
+    "correcta": 1,
+    "label": "MRUA",
+    "fb_ok": "Correcto. v = 3×6 = 18 m/s. x = ½·3×36 = 54 m.",
+    "fb_mal": "Error: usar x = v·t (MRU) en lugar de x = ½·a·t².",
+    "tip": "Partiendo del reposo: v = a·t, x = ½·a·t².",
+    "fuente": "PAES 2024"
+  },
+  {
+    "texto": "Un objeto parte desde el origen con velocidad inicial de 5 m/s y aceleración constante de 2 m/s². ¿Cuál es su posición a los 4 s?",
+    "formula": "x = x₀ + v₀·t + ½·a·t²",
+    "opciones": ["20 m", "28 m", "36 m", "52 m"],
+    "correcta": 2,
+    "label": "Ecuación de itinerario",
+    "fb_ok": "Correcto. x = 0 + 5×4 + ½·2×16 = 20 + 16 = 36 m.",
+    "fb_mal": "Error: olvidar el término ½·a·t² (daría 20 m) o usar v₀·t + a·t (52 m).",
+    "tip": "No olvides el ½ en x = v₀·t + ½·a·t².",
+    "fuente": "PAES 2025"
+  },
+  {
+    "texto": "Un ciclista avanza 6 km al este y luego 2 km al oeste. ¿Cuál es su desplazamiento?",
+    "formula": null,
+    "opciones": ["8 km al este", "8 km al oeste", "4 km al este", "4 km al oeste"],
+    "correcta": 2,
+    "label": "Desplazamiento",
+    "fb_ok": "Correcto. Desplazamiento = 6 - 2 = 4 km al este.",
+    "fb_mal": "Error: sumar 6 + 2 = 8 km (eso es distancia, no desplazamiento).",
+    "tip": "Desplazamiento = posición final - posición inicial.",
+    "fuente": "PAES 2023"
+  },
+  {
+    "texto": "Un móvil tiene la siguiente ecuación de posición: x = 10 + 4t (SI). ¿Cuál es su velocidad?",
+    "formula": "v = dx/dt",
+    "opciones": ["10 m/s", "4 m/s", "14 m/s", "2,5 m/s"],
+    "correcta": 1,
+    "label": "MRU",
+    "fb_ok": "Correcto. En x = x₀ + v·t, la velocidad es el coeficiente de t: 4 m/s.",
+    "fb_mal": "Error: confundir x₀ (10 m) con la velocidad.",
+    "tip": "En x = x₀ + v·t, v es el número que multiplica a t.",
+    "fuente": "PAES 2024"
+  },
+  {
+    "texto": "Se deja caer una piedra desde un puente (v₀ = 0). ¿Cuál es su rapidez a los 3 segundos? (g = 10 m/s²)",
+    "formula": "v = g·t",
+    "opciones": ["10 m/s", "20 m/s", "30 m/s", "40 m/s"],
+    "correcta": 2,
+    "label": "Caída libre",
+    "fb_ok": "Correcto. v = 10 × 3 = 30 m/s.",
+    "fb_mal": "Error: usar x = ½·g·t² en lugar de v = g·t.",
+    "tip": "En caída libre desde el reposo: v = g·t, h = ½·g·t².",
+    "fuente": "PAES 2023"
+  },
+  {
+    "texto": "Un auto frena con aceleración constante de -4 m/s² desde una velocidad de 20 m/s. ¿Qué distancia recorre hasta detenerse?",
+    "formula": "v² = v₀² + 2·a·Δx",
+    "opciones": ["25 m", "50 m", "75 m", "100 m"],
+    "correcta": 1,
+    "label": "MRUA (frenado)",
+    "fb_ok": "Correcto. 0 = 400 + 2·(-4)·Δx → 8Δx = 400 → Δx = 50 m.",
+    "fb_mal": "Error: usar Δx = v·t sin calcular t primero, o usar a positiva.",
+    "tip": "En frenado, a y v tienen signos opuestos.",
+    "fuente": "PAES 2025"
+  },
+  {
+    "texto": "Un objeto se mueve según el gráfico v-t: de t=0 a t=4 s, v=10 m/s constante; de t=4 a t=6 s, v disminuye linealmente a 0. ¿Cuál es el desplazamiento total?",
+    "formula": "área bajo v-t",
+    "opciones": ["40 m", "50 m", "60 m", "70 m"],
+    "correcta": 1,
+    "label": "Gráficos v-t",
+    "fb_ok": "Correcto. Área = (4×10) + (2×10)/2 = 40 + 10 = 50 m.",
+    "fb_mal": "Error: calcular solo el rectángulo (40 m) o solo el triángulo (10 m).",
+    "tip": "El desplazamiento es el ÁREA bajo la curva v-t.",
+    "fuente": "PAES 2024"
+  },
+  {
+    "texto": "Dos autos parten simultáneamente desde puntos separados 120 m en sentidos opuestos. A: v_A = +15 m/s (desde x=0). B: v_B = -25 m/s (desde x=120 m). ¿En qué posición se encuentran?",
+    "formula": "x_A = x_B → 15t = 120 - 25t",
+    "opciones": ["30 m", "45 m", "60 m", "75 m"],
+    "correcta": 1,
+    "label": "Encuentro de móviles",
+    "fb_ok": "Correcto. 40t = 120 → t = 3 s. x = 15×3 = 45 m.",
+    "fb_mal": "Error: olvidar que B parte de x=120 m y usar x_B = -25t.",
+    "tip": "Si parten de extremos opuestos, sus ecuaciones son x_A = v_A·t y x_B = d - v_B·t.",
+    "fuente": "PAES 2025"
+  },
+  {
+    "texto": "Un objeto se lanza hacia arriba con v₀ = 30 m/s (g = 10 m/s²). ¿Qué altura máxima alcanza?",
+    "formula": "h_max = v₀²/2g",
+    "opciones": ["30 m", "45 m", "60 m", "90 m"],
+    "correcta": 1,
+    "label": "Caída libre",
+    "fb_ok": "Correcto. h = 900/(2×10) = 900/20 = 45 m.",
+    "fb_mal": "Error: usar h = v₀·t - ½·g·t² sin calcular t primero, o usar t = v₀/g = 3 s y luego h = 30×3 - 5×9 = 90 - 45 = 45 m (da lo mismo pero más largo).",
+    "tip": "Altura máxima: h_max = v₀²/2g. Tiempo de subida: t = v₀/g.",
+    "fuente": "PAES 2023"
+  },
+  {
+    "texto": "Un móvil parte del reposo con aceleración constante a. Si duplica su velocidad en 4 segundos, ¿cuánto vale a?",
+    "formula": "a = Δv/Δt",
+    "opciones": ["a = v₀/4", "a = v_f/4", "a = v_f/2", "a = 2v_f"],
+    "correcta": 0,
+    "label": "MRUA",
+    "fb_ok": "Correcto. Si parte del reposo, v₀ = 0. En 4 s alcanza v_f. a = v_f/4.",
+    "fb_mal": "Error: no considerar que parte del reposo.",
+    "tip": "a = (v_f - v₀)/t. Si v₀ = 0, a = v_f/t.",
+    "fuente": "PAES 2024"
+  },
+  {
+    "texto": "Un gráfico x-t muestra una parábola cóncava hacia arriba. ¿Qué tipo de movimiento representa?",
+    "formula": null,
+    "opciones": ["MRU con velocidad positiva", "MRU con velocidad negativa", "MRUA con aceleración positiva", "MRUA con aceleración negativa"],
+    "correcta": 2,
+    "label": "Gráficos x-t",
+    "fb_ok": "Correcto. Parábola cóncava hacia arriba (crece cada vez más rápido) → aceleración positiva.",
+    "fb_mal": "Error: confundir con MRU (recta) o con aceleración negativa (parábola cóncava hacia abajo).",
+    "tip": "x-t: recta = MRU, parábola cóncava arriba = a > 0, parábola cóncava abajo = a < 0.",
+    "fuente": "PAES 2025"
+  },
+  {
+    "texto": "Un bote cruza un río de 80 m de ancho. Avanza a 4 m/s perpendicular a la orilla, pero la corriente lo arrastra a 3 m/s. ¿Cuánto tarda en cruzar?",
+    "formula": "t = ancho / v_perpendicular",
+    "opciones": ["10 s", "16 s", "20 s", "26,7 s"],
+    "correcta": 2,
+    "label": "Relatividad de Galileo",
+    "fb_ok": "Correcto. El tiempo de cruce solo depende de la velocidad perpendicular: t = 80/4 = 20 s.",
+    "fb_mal": "Error: usar la velocidad resultante (5 m/s) para calcular el tiempo: 80/5 = 16 s.",
+    "tip": "El tiempo de cruce depende SOLO de la velocidad perpendicular a la orilla.",
+    "fuente": "PAES 2024"
+  },
+  {
+    "texto": "Un automóvil recorre 108 km en 1,5 horas. ¿Cuál es su rapidez media en m/s?",
+    "formula": "v = d/t, luego ÷3,6",
+    "opciones": ["10 m/s", "15 m/s", "20 m/s", "25 m/s"],
+    "correcta": 2,
+    "label": "Rapidez media",
+    "fb_ok": "Correcto. v = 108/1,5 = 72 km/h = 72÷3,6 = 20 m/s.",
+    "fb_mal": "Error: convertir mal km/h a m/s (multiplicar por 3,6 en lugar de dividir).",
+    "tip": "km/h → m/s: divide por 3,6.",
+    "fuente": "PAES 2023"
+  },
+  {
+    "texto": "Se deja caer una pelota desde una altura de 45 m (g = 10 m/s²). ¿Cuánto tarda en llegar al suelo?",
+    "formula": "h = ½·g·t² → t = √(2h/g)",
+    "opciones": ["2 s", "3 s", "4 s", "5 s"],
+    "correcta": 1,
+    "label": "Caída libre",
+    "fb_ok": "Correcto. t = √(2×45/10) = √9 = 3 s.",
+    "fb_mal": "Error: usar t = h/g o t = √(h/2g).",
+    "tip": "t = √(2h/g). Para h = 45 m, g = 10 m/s² → t = √9 = 3 s.",
+    "fuente": "PAES 2024"
+  },
+  {
+    "texto": "Un móvil tiene velocidad inicial de 8 m/s y aceleración de -2 m/s². ¿En qué instante su velocidad se hace cero?",
+    "formula": "v = v₀ + a·t → 0 = 8 - 2t",
+    "opciones": ["2 s", "3 s", "4 s", "5 s"],
+    "correcta": 2,
+    "label": "MRUA",
+    "fb_ok": "Correcto. 2t = 8 → t = 4 s.",
+    "fb_mal": "Error: usar a positiva: 0 = 8 + 2t → t = -4 s (sin sentido físico).",
+    "tip": "Cuando frena, a tiene signo opuesto a v₀.",
+    "fuente": "PAES 2025"
+  },
+  {
+    "texto": "El gráfico v-t muestra una línea horizontal en v = 15 m/s. ¿Qué afirmación es correcta?",
+    "formula": null,
+    "opciones": [
+      "La aceleración es 15 m/s²",
+      "La aceleración es 0 m/s²",
+      "El desplazamiento es 15 m",
+      "El móvil está en reposo"
+    ],
+    "correcta": 1,
+    "label": "Gráficos v-t",
+    "fb_ok": "Correcto. Línea horizontal en v-t → velocidad constante → aceleración nula (MRU).",
+    "fb_mal": "Error: pensar que v = 15 significa a = 15. a es la pendiente.",
+    "tip": "En v-t: horizontal = a = 0 (MRU). Inclinada = a constante (MRUA).",
+    "fuente": "PAES 2024"
+  },
+  {
+    "texto": "Un objeto cae libremente desde el reposo. ¿Qué distancia recorre durante el primer segundo? (g = 10 m/s²)",
+    "formula": "h = ½·g·t²",
+    "opciones": ["5 m", "10 m", "15 m", "20 m"],
+    "correcta": 0,
+    "label": "Caída libre",
+    "fb_ok": "Correcto. h = ½×10×1² = 5 m.",
+    "fb_mal": "Error: usar h = g·t (10 m) o h = g·t² (10 m).",
+    "tip": "En caída libre: h = 5t² (si g=10). En t=1 s → 5 m.",
+    "fuente": "PAES 2023"
+  },
+  {
+    "texto": "Dos móviles A y B parten del mismo punto. A: v = 8 m/s constante. B: v₀ = 0, a = 2 m/s². ¿Cuánto tiempo tarda B en alcanzar a A?",
+    "formula": "8t = ½·2·t² → 8t = t²",
+    "opciones": ["4 s", "6 s", "8 s", "10 s"],
+    "correcta": 2,
+    "label": "MRU vs MRUA",
+    "fb_ok": "Correcto. t² - 8t = 0 → t(t - 8) = 0 → t = 8 s.",
+    "fb_mal": "Error: igualar velocidades en lugar de posiciones.",
+    "tip": "Para el alcance, iguala posiciones: x_A = x_B.",
+    "fuente": "PAES 2024"
+  },
+  {
+    "texto": "¿Cuál de las siguientes afirmaciones sobre la aceleración es CORRECTA?",
+    "formula": null,
+    "opciones": [
+      "Si la aceleración es positiva, el objeto siempre acelera",
+      "Si la aceleración es negativa, el objeto siempre frena",
+      "La aceleración es la variación de la velocidad por unidad de tiempo",
+      "La aceleración es la pendiente del gráfico x-t"
+    ],
+    "correcta": 2,
+    "label": "Aceleración",
+    "fb_ok": "Correcto. a = Δv/Δt, es la variación de velocidad por unidad de tiempo.",
+    "fb_mal": "Error: pensar que a > 0 siempre significa acelerar (depende del signo de v).",
+    "tip": "Acelerar: a y v tienen el mismo signo. Frenar: a y v tienen signos opuestos.",
+    "fuente": "PAES 2025"
+  },
+  {
+    "texto": "Un móvil parte del reposo con a = 4 m/s². ¿Cuál es su velocidad a los 5 s?",
+    "formula": "v = a·t",
+    "opciones": ["4 m/s", "9 m/s", "16 m/s", "20 m/s"],
+    "correcta": 3,
+    "label": "MRUA",
+    "fb_ok": "Correcto. v = 4 × 5 = 20 m/s.",
+    "fb_mal": "Error: usar x = ½·a·t² en lugar de v = a·t.",
+    "tip": "Si parte del reposo: v = a·t, x = ½·a·t².",
+    "fuente": "PAES 2023"
+  },
+  {
+    "texto": "Un objeto se mueve con MRU a 12 m/s durante 6 s. ¿Qué distancia recorre?",
+    "formula": "x = v·t",
+    "opciones": ["24 m", "48 m", "60 m", "72 m"],
+    "correcta": 3,
+    "label": "MRU",
+    "fb_ok": "Correcto. x = 12 × 6 = 72 m.",
+    "fb_mal": "Error: usar x = ½·v·t (36 m) o confundir con MRUA.",
+    "tip": "En MRU: x = v·t. No hay ½ ni aceleración.",
+    "fuente": "PAES 2024"
+  },
+  {
+    "texto": "Se lanza una piedra hacia arriba con v₀ = 25 m/s. ¿Cuánto tarda en alcanzar la altura máxima? (g = 10 m/s²)",
+    "formula": "t = v₀/g",
+    "opciones": ["1,25 s", "2 s", "2,5 s", "5 s"],
+    "correcta": 2,
+    "label": "Caída libre",
+    "fb_ok": "Correcto. t = 25/10 = 2,5 s.",
+    "fb_mal": "Error: usar t = 2v₀/g (tiempo total de vuelo) = 5 s.",
+    "tip": "Tiempo de subida = v₀/g. Tiempo total de vuelo = 2v₀/g.",
+    "fuente": "PAES 2025"
+  }
+];
+
+
+// ═══════════════════════════════════════════════════════════════
+// LÓGICA DEL CONTROL (NO MODIFICAR)
+// ═══════════════════════════════════════════════════════════════
+let rut = "", actual = 0, elegidas = new Array(preguntas.length).fill(null);
+const letras = ["A", "B", "C", "D"];
+
+document.getElementById('rut-input').addEventListener('input', function(e) { e.target.value = e.target.value.replace(/\D/g, ''); });
+document.getElementById('rut-input').addEventListener('keydown', function(e) { if (e.key === 'Enter') startQuiz(); });
+
+function startQuiz() {
+  const val = document.getElementById('rut-input').value.trim();
+  const err = document.getElementById('rut-error');
+  if (val.length < 7) { err.style.display = 'block'; return; }
+  err.style.display = 'none';
+  rut = val;
+  document.getElementById('screen-rut').style.display = 'none';
+  document.getElementById('screen-quiz').style.display = 'block';
+  renderPregunta();
+}
+
+function renderPregunta() {
+  const q = preguntas[actual];
+  document.getElementById('prog').style.width = ((actual / preguntas.length) * 100) + '%';
+  document.getElementById('prog-label').textContent = (actual + 1) + ' / ' + preguntas.length;
+  document.getElementById('aviso').style.display = 'none';
+
+  const formula = q.formula ? `<div class="q-formula">${q.formula}</div>` : '';
+  const opts = q.opciones.map((o, i) => {
+    const sel = elegidas[actual] === i ? 'selected' : '';
+    return `<div class="opt ${sel}" id="opt-${i}" onclick="elegir(${i})">
+      <div class="opt-circle">${letras[i]}</div>
+      <div class="opt-text">${o}</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('question-card').innerHTML = `
+    <div class="q-meta">
+      <div class="q-num">Pregunta ${actual + 1} de ${preguntas.length}</div>
+      <div class="q-tag">${q.label}</div>
+    </div>
+    <div class="q-text">${q.texto}</div>
+    ${formula}
+    <div class="options">${opts}</div>
+  `;
+
+  document.getElementById('nav-btn').innerHTML = `
+    <button class="btn" onclick="siguiente()">${actual === preguntas.length - 1 ? 'Ver mis resultados →' : 'Siguiente →'}</button>
+  `;
+}
+
+function elegir(idx) {
+  elegidas[actual] = idx;
+  document.querySelectorAll('.opt').forEach((o, i) => o.classList.toggle('selected', i === idx));
+  document.getElementById('aviso').style.display = 'none';
+}
+
+function siguiente() {
+  if (elegidas[actual] === null) { document.getElementById('aviso').style.display = 'block'; return; }
+  actual++;
+  if (actual >= preguntas.length) mostrarResultados();
+  else renderPregunta();
+}
+
+function mostrarResultados() {
+  document.getElementById('screen-quiz').style.display = 'none';
+  document.getElementById('screen-results').style.display = 'block';
+
+  let correctas = 0;
+  preguntas.forEach((q, i) => { if (elegidas[i] === q.correcta) correctas++; });
+  const pct = Math.round((correctas / preguntas.length) * 100);
+
+  document.getElementById('score-num').textContent = pct + '%';
+  document.getElementById('score-sub').textContent = correctas + ' de ' + preguntas.length + ' preguntas correctas';
+  document.getElementById('st-v').textContent = correctas;
+  document.getElementById('st-r').textContent = preguntas.length - correctas;
+  document.getElementById('st-p').textContent = correctas + '/' + preguntas.length;
+
+  const detalle = preguntas.map((q, i) => {
+    const ok = elegidas[i] === q.correcta;
+    const cls = ok ? 'ok' : 'bad';
+    const elegidaTexto = `Tu respuesta: ${letras[elegidas[i]]}. ${q.opciones[elegidas[i]]}`;
+    const correctaTexto = `Correcta: ${letras[q.correcta]}. ${q.opciones[q.correcta]}`;
+    const cuerpo = ok
+      ? `<div class="detalle-body">${q.fb_ok}</div>`
+      : `<div class="detalle-body">
+          <div class="detalle-elegida">✗ ${elegidaTexto}</div>
+          <div class="detalle-correcta">✓ ${correctaTexto}</div>
+          ${q.fb_mal}
+          ${q.tip ? `<div class="detalle-tip">💡 ${q.tip}</div>` : ''}
+         </div>`;
+    return `<div class="detalle-item">
+      <div class="detalle-header ${cls}">
+        <div class="detalle-icono ${cls}">${ok ? '✓' : '✗'}</div>
+        <div class="detalle-label ${cls}">P${i+1} — ${q.label}</div>
+      </div>
+      ${cuerpo}
+    </div>`;
+  }).join('');
+  document.getElementById('detalle-items').innerHTML = detalle;
+
+  enviarSheet(correctas, pct);
+}
+
+function enviarSheet(correctas, pct) {
+  if (!CONFIG.sheet_url || CONFIG.sheet_url.includes("TU_URL_AQUI")) {
+    console.warn("⚠ Configura la URL del Apps Script en CONFIG.sheet_url");
+    return;
+  }
+  const badge = document.getElementById('sync-badge');
+  badge.className = 'sync-badge show';
+  badge.textContent = '⏳ Guardando resultado...';
+
+  const params = new URLSearchParams({
+    modo: "guardar",
+    control_id: CONFIG.control_id,
+    control_tema: CONFIG.control_tema,
+    rut: rut,
+    fecha: new Date().toLocaleString('es-CL'),
+    correctas: correctas,
+    total: preguntas.length,
+    porcentaje: pct
+  });
+
+  const url = CONFIG.sheet_url + '?' + params.toString();
+  const img = new Image();
+  img.onload = img.onerror = function() { badge.textContent = '✓ Resultado guardado en Drive'; };
+  img.src = url;
+}
+
+function restart() {
+  actual = 0;
+  elegidas = new Array(preguntas.length).fill(null);
+  document.getElementById('screen-results').style.display = 'none';
+  document.getElementById('screen-quiz').style.display = 'block';
+  renderPregunta();
+}
+</script>
+</body>
+</html>
