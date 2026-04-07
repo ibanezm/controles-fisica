@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Taller 2 · Luz y óptica · Preuniversitario UV</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+  :root{--azul:#1a56db;--azul-claro:#ebf0ff;--verde:#057a55;--verde-claro:#e3fcef;--rojo:#c81e1e;--rojo-claro:#fde8e8;--gris-bg:#f8f9fa;--gris-borde:#e2e8f0;--gris-texto:#64748b;--negro:#0f172a;--blanco:#ffffff;--radio:10px}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'IBM Plex Sans',sans-serif;background:var(--gris-bg);color:var(--negro);min-height:100vh;padding:1.5rem 1rem 3rem}
+  .container{max-width:620px;margin:0 auto}
+  .header{text-align:center;margin-bottom:2rem}
+  .header .tag{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--azul);background:var(--azul-claro);padding:4px 12px;border-radius:20px;margin-bottom:10px}
+  .header h1{font-size:22px;font-weight:600;margin-bottom:4px}
+  .header p{font-size:13px;color:var(--gris-texto)}
+  .progress-wrap{display:flex;align-items:center;gap:10px;margin-bottom:1.5rem}
+  .progress-track{flex:1;height:5px;background:var(--gris-borde);border-radius:10px;overflow:hidden}
+  .progress-fill{height:100%;background:var(--azul);border-radius:10px;transition:width .4s ease;width:0%}
+  .progress-label{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--gris-texto);white-space:nowrap}
+  .card{background:var(--blanco);border:1px solid var(--gris-borde);border-radius:var(--radio);padding:1.5rem;margin-bottom:1rem}
+  .rut-wrap{text-align:center}
+  .rut-icon{width:56px;height:56px;background:var(--azul-claro);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:26px}
+  .rut-wrap h2{font-size:17px;font-weight:600;margin-bottom:6px}
+  .rut-wrap p{font-size:13px;color:var(--gris-texto);margin-bottom:1.5rem;line-height:1.6}
+  .rut-input{width:100%;padding:12px 16px;font-size:20px;font-family:'IBM Plex Mono',monospace;border:1.5px solid var(--gris-borde);border-radius:var(--radio);text-align:center;letter-spacing:.05em;outline:none;transition:border-color .2s;margin-bottom:6px}
+  .rut-input:focus{border-color:var(--azul)}
+  .rut-hint{font-size:11px;color:var(--gris-texto);margin-bottom:1.25rem}
+  .rut-error{font-size:12px;color:var(--rojo);margin-bottom:.75rem;display:none}
+  .btn{width:100%;padding:13px;background:var(--azul);color:white;font-family:'IBM Plex Sans',sans-serif;font-size:15px;font-weight:500;border:none;border-radius:var(--radio);cursor:pointer;transition:opacity .2s,transform .1s}
+  .btn:hover{opacity:.9}
+  .btn:active{transform:scale(.98)}
+  .btn-outline{background:transparent;color:var(--azul);border:1.5px solid var(--azul);margin-top:10px}
+  .btn-outline:hover{background:var(--azul-claro)}
+  .q-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+  .q-num{font-size:12px;font-weight:600;color:var(--azul);text-transform:uppercase;letter-spacing:.06em}
+  .q-tag{font-size:11px;color:var(--gris-texto);background:var(--gris-bg);padding:3px 8px;border-radius:20px}
+  .q-text{font-size:16px;font-weight:500;line-height:1.55;margin-bottom:1rem}
+  .q-formula{font-family:'IBM Plex Mono',monospace;font-size:14px;color:var(--azul);background:var(--azul-claro);padding:8px 14px;border-radius:8px;display:inline-block;margin-bottom:1rem}
+  .options{display:flex;flex-direction:column;gap:8px}
+  .opt{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border:1.5px solid var(--gris-borde);border-radius:var(--radio);cursor:pointer;transition:all .15s;background:var(--blanco);-webkit-tap-highlight-color:transparent}
+  .opt:hover{border-color:var(--azul);background:var(--azul-claro)}
+  .opt.selected{border-color:var(--azul);background:var(--azul-claro)}
+  .opt.disabled{pointer-events:none}
+  .opt-circle{width:28px;height:28px;min-width:28px;border-radius:50%;border:1.5px solid var(--gris-borde);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--gris-texto);transition:all .15s;margin-top:1px}
+  .opt.selected .opt-circle{background:var(--azul);border-color:var(--azul);color:white}
+  .opt.correct{border-color:var(--verde);background:var(--verde-claro)}
+  .opt.wrong{border-color:var(--rojo);background:var(--rojo-claro)}
+  .opt.show-correct{border-color:var(--verde);background:var(--verde-claro);opacity:.65}
+  .opt.correct .opt-circle{background:var(--verde);border-color:var(--verde);color:white}
+  .opt.wrong .opt-circle{background:var(--rojo);border-color:var(--rojo);color:white}
+  .opt-text{font-size:14px;line-height:1.45}
+  .aviso{font-size:12px;color:var(--rojo);margin-top:8px;display:none}
+  .nav{margin-top:1rem}
+  .score-card{background:#1e3a5f;color:white;border-radius:var(--radio);padding:1.5rem;text-align:center;margin-bottom:1rem}
+  .score-label{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#93b4d4;margin-bottom:4px}
+  .score-num{font-size:56px;font-weight:600;font-family:'IBM Plex Mono',monospace;line-height:1;margin-bottom:4px;color:#e8f1fb}
+  .score-sub{font-size:13px;color:#93b4d4}
+  .stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1.25rem}
+  .stat-box{background:var(--gris-bg);border-radius:8px;padding:12px 8px;text-align:center}
+  .stat-box .val{font-size:20px;font-weight:600;color:var(--negro)}
+  .stat-box .lbl{font-size:11px;color:var(--gris-texto);margin-top:2px}
+  .detalle-titulo{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--gris-texto);margin-bottom:10px}
+  .detalle-item{border:1px solid var(--gris-borde);border-radius:var(--radio);margin-bottom:8px;overflow:hidden}
+  .detalle-header{display:flex;align-items:center;gap:10px;padding:10px 14px}
+  .detalle-header.ok{background:var(--verde-claro)}
+  .detalle-header.bad{background:var(--rojo-claro)}
+  .detalle-icono{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+  .detalle-icono.ok{background:var(--verde);color:white}
+  .detalle-icono.bad{background:var(--rojo);color:white}
+  .detalle-label{font-size:13px;font-weight:500}
+  .detalle-label.ok{color:#065f46}
+  .detalle-label.bad{color:#7f1d1d}
+  .detalle-body{padding:10px 14px;font-size:13px;line-height:1.6;color:var(--gris-texto);border-top:1px solid var(--gris-borde)}
+  .detalle-elegida{font-size:12px;color:var(--rojo);margin-bottom:4px}
+  .detalle-correcta{font-size:12px;color:var(--verde);margin-bottom:6px}
+  .detalle-tip{margin-top:8px;padding:8px 10px;background:#fef9e7;border-left:3px solid #d48b00;border-radius:4px;font-size:12px;color:#92400e}
+  .sync-badge{display:none;text-align:center;font-size:12px;padding:6px 0;color:var(--gris-texto);margin-bottom:1rem}
+  .sync-badge.show{display:block}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="tag">Preuniversitario UV · Física</div>
+    <h1>Taller 2 — Luz y óptica</h1>
+    <p>30 preguntas tipo PAES · sin nota · feedback inmediato</p>
+  </div>
+
+  <!-- PANTALLA DE RUT -->
+  <div id="screen-rut">
+    <div class="card">
+      <div class="rut-wrap">
+        <div class="rut-icon">🎧</div>
+        <h2>Ingresa tu RUT</h2>
+        <p>Para llevar seguimiento de tu progreso durante el semestre.<br>Sin puntos ni guión, solo números.</p>
+        <input type="tel" class="rut-input" id="rut-input" placeholder="12345678" maxlength="9" inputmode="numeric">
+        <div class="rut-hint">Ej: si tu RUT es 12.345.678-9 → escribe 12345678</div>
+        <div class="rut-error" id="rut-error">⚠ Ingresa al menos 7 dígitos</div>
+        <button class="btn" onclick="startQuiz()">Comenzar →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANTALLA DE PREGUNTAS -->
+  <div id="screen-quiz" style="display:none;">
+    <div class="progress-wrap">
+      <div class="progress-track"><div class="progress-fill" id="prog"></div></div>
+      <div class="progress-label" id="prog-label">1 / 30</div>
+    </div>
+    <div class="card" id="question-card"></div>
+    <div class="aviso" id="aviso">Debes seleccionar una opción para continuar.</div>
+    <div class="nav" id="nav-btn"></div>
+  </div>
+
+  <!-- PANTALLA DE RESULTADOS -->
+  <div id="screen-results" style="display:none;">
+    <div class="score-card">
+      <div class="score-label">Resultado</div>
+      <div class="score-num" id="score-num">—</div>
+      <div class="score-sub" id="score-sub">—</div>
+    </div>
+    <div class="card">
+      <div class="stats-grid">
+        <div class="stat-box"><div class="val" id="st-v">0</div><div class="lbl">Correctas</div></div>
+        <div class="stat-box"><div class="val" id="st-r">0</div><div class="lbl">Incorrectas</div></div>
+        <div class="stat-box"><div class="val" id="st-p">0/30</div><div class="lbl">Puntaje</div></div>
+      </div>
+      <div class="sync-badge" id="sync-badge"></div>
+      <div class="detalle-titulo">Revisión pregunta a pregunta</div>
+      <div id="detalle-items"></div>
+      <button class="btn btn-outline" onclick="restart()">Volver a intentar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// CONFIGURACIÓN — REEMPLAZA TU_URL_AQUI con la URL de tu Apps Script
+// ═══════════════════════════════════════════════════════════════
+const CONFIG = {
+    sheet_url: "https://script.google.com/macros/s/AKfycbwC_5Tw6oOWm3JmGu7jYnuQAfci1lxoxc6uZ4jQI_x8IpadNy5JwymBRpphzBvsyXxT/exec",
+    control_id: "Taller 2",
+    control_tema: "Luz y optica"
+};
+
+// ═══════════════════════════════════════════════════════════════
+// BANCO DE 30 PREGUNTAS (Capítulos 5 y 6:)
+// ═══════════════════════════════════════════════════════════════
+
+  const preguntas = [
+  // ==================== CAPÍTULO 5: LUZ Y ESPECTRO EM (18 preguntas) ====================
+  {
+    "texto": "La velocidad de la luz en el vacío es c = 3 × 10⁸ m/s. En un vidrio con índice de refracción n = 1,5, ¿cuál es la velocidad de la luz?",
+    "formula": "v = c/n",
+    "opciones": ["4,5 × 10⁸ m/s", "3,0 × 10⁸ m/s", "2,0 × 10⁸ m/s", "1,5 × 10⁸ m/s"],
+    "correcta": 2,
+    "label": "Índice de refracción",
+    "fb_ok": "Correcto. v = c/n = (3×10⁸)/1,5 = 2×10⁸ m/s.",
+    "fb_mal": "Error común: multiplicar c·n en lugar de dividir. Mayor n → menor velocidad.",
+    "tip": "n = c/v → v = c/n. n = 1,5 es 'una vez y media más lento'.",
+    "fuente": "PAES 2023"
+  },
+  {
+    "texto": "Un objeto se ve de color azul bajo luz blanca. Si se ilumina únicamente con luz roja, ¿de qué color se verá el objeto?",
+    "formula": null,
+    "opciones": ["Azul", "Rojo", "Blanco", "Negro"],
+    "correcta": 3,
+    "label": "Color de los objetos",
+    "fb_ok": "Correcto. El objeto azul solo refleja luz azul. Al iluminarlo con luz roja, no tiene azul que reflejar → absorbe toda la luz → se ve negro.",
+    "fb_mal": "Error común: pensar que el objeto se ve rojo porque 'lo ilumina luz roja'.",
+    "tip": "Objeto color X → refleja X, absorbe los demás colores.",
+    "fuente": "PAES 2024"
+  },
+  {
+    "texto": "Un rayo de luz viaja en el vacío e incide sobre un material transparente con ángulo θ (0° < θ < 90°) respecto a la normal. ¿Qué ocurre con el rayo al incidir?",
+    "formula": null,
+    "opciones": [
+      "Se refleja con ángulo menor que θ y se refracta con ángulo menor que θ",
+      "Se refleja con ángulo igual a θ y se refracta con ángulo menor que θ",
+      "Se refleja con ángulo igual a θ y se refracta con ángulo mayor que θ",
+      "Solo se refracta, sin reflexión parcial"
+    ],
+    "correcta": 1,
+    "label": "Reflexión y refracción",
+    "fb_ok": "Correcto. Reflexión: θᵣ = θᵢ. Al entrar a medio más denso (n > 1), el rayo se acerca a la normal: θ₂ < θ.",
+    "fb_mal": "Error: pensar que el ángulo de refracción es igual al de incidencia.",
+    "tip": "Reflexión: ángulo igual. Refracción: medio más denso → se acerca a la normal.",
+    "fuente": "PAES 2025"
+  },
+  {
+    "texto": "¿Cuál de las siguientes ondas del espectro electromagnético tiene MAYOR energía por fotón?",
+    "formula": "E = h·f",
+    "opciones": ["Ondas de radio", "Luz infrarroja", "Luz visible", "Rayos gamma"],
+    "correcta": 3,
+    "label": "Espectro EM",
+    "fb_ok": "Correcto. E = h·f. Los rayos gamma tienen la mayor frecuencia del espectro, por lo tanto la mayor energía por fotón.",
+    "fb_mal": "Error: confundir longitud de onda con energía. Mayor λ → menor f → menor E.",
+    "tip": "Orden de menor a mayor energía: radio < microondas < IR < visible < UV < RX < γ.",
+    "fuente": "PAES 2023"
+  },
+  {
+    "texto": "Al comparar la radiación infrarroja (IR) con la ultravioleta (UV) propagándose en el vacío, ¿cuál afirmación es correcta?",
+    "formula": null,
+    "opciones": [
+      "Ambas tienen la misma rapidez en el vacío",
+      "El IR tiene mayor frecuencia que el UV",
+      "El UV tiene mayor longitud de onda que el IR",
+      "El IR viaja más rápido en el vacío que el UV"
+    ],
+    "correcta": 0,
+    "label": "Espectro EM",
+    "fb_ok": "Correcto. Todas las ondas EM viajan a c = 3×10⁸ m/s en el vacío, independientemente de su frecuencia.",
+    "fb_mal": "Error: pensar que la rapidez depende de la frecuencia. En el vacío es constante.",
+    "tip": "En el vacío: c = λ·f constante para TODAS las ondas EM.",
+    "fuente": "PAES 2024"
+  },
+  {
+    "texto": "La luz viaja en el vacío a c = 3×10⁸ m/s. Si el índice de refracción del diamante es n = 2,4, ¿aproximadamente a qué velocidad viaja la luz en el diamante?",
+    "formula": "v = c/n",
+    "opciones": ["3×10⁸ m/s", "2,4×10⁸ m/s", "1,5×10⁸ m/s", "1,25×10⁸ m/s"],
+    "correcta": 3,
+    "label": "Índice de refracción",
+    "fb_ok": "Correcto. v = c/n = (3×10⁸)/2,4 = 1,25×10⁸ m/s. El diamante frena mucho la luz.",
+    "fb_mal": "Error: aproximar 3/2,4 ≈ 1,25. Es un cálculo mental: 2,4 × 1,25 = 3.",
+    "tip": "n = 2,4 significa que la luz viaja a ≈ 41% de c.",
+    "fuente": "PAES 2025"
+  },
+  {
+    "texto": "Un haz de luz blanca pasa a través de un prisma y se dispersa en sus colores componentes. ¿Qué color se desvía MÁS?",
+    "formula": null,
+    "opciones": ["Rojo", "Verde", "Amarillo", "Violeta"],
+    "correcta": 3,
+    "label": "Dispersión",
+    "fb_ok": "Correcto. El violeta tiene mayor frecuencia (y mayor n en el prisma), por lo tanto se desvía más.",
+    "fb_mal": "Error: pensar que el rojo se desvía más porque 'es el primero del arcoíris'.",
+    "tip": "Mayor frecuencia → mayor índice de refracción → mayor desviación.",
+    "fuente": "PAES 2024"
+  },
+  {
+    "texto": "Una luz monocromática de frecuencia f viaja en el vacío con longitud de onda λ. Al entrar a un medio con n = 2, ¿cuál es su nueva longitud de onda?",
+    "formula": "λ' = λ/n",
+    "opciones": ["2λ", "λ", "λ/2", "λ/4"],
+    "correcta": 2,
+    "label": "Longitud de onda en medios",
+    "fb_ok": "Correcto. λ' = v/f = (c/n)/f = (c/f)/n = λ/n. Con n=2, λ' = λ/2.",
+    "fb_mal": "Error: pensar que λ aumenta. Al aumentar n, v disminuye y λ también disminuye.",
+    "tip": "λ' = λ₀/n. Mayor n → menor λ en el medio.",
+    "fuente": "PAES 2024"
+  },
+  {
+    "texto": "Una persona ve un objeto de color verde bajo luz blanca. Si se ilumina el objeto solo con luz magenta (mezcla de rojo y azul), ¿de qué color se verá?",
+    "formula": null,
+    "opciones": ["Verde", "Magenta", "Blanco", "Negro"],
+    "correcta": 3,
+    "label": "Color de los objetos",
+    "fb_ok": "Correcto. El objeto verde refleja solo verde. La luz magenta (rojo+azul) no contiene verde → el objeto absorbe toda la luz → se ve negro.",
+    "fb_mal": "Error: pensar que el objeto se ve magenta porque 'es el color de la luz'.",
+    "tip": "Síntesis sustractiva: el objeto solo refleja su color, absorbe los demás.",
+    "fuente": "Preuniversitario UC"
+  },
+  {
+    "texto": "La luz pasa del aire (n≈1) al agua (n≈1,33). ¿Qué ocurre con su rapidez y su longitud de onda?",
+    "formula": null,
+    "opciones": [
+      "Ambas aumentan",
+      "Ambas disminuyen",
+      "La rapidez aumenta y la longitud de onda disminuye",
+      "La rapidez disminuye y la longitud de onda aumenta"
+    ],
+    "correcta": 1,
+    "label": "Cambio de medio",
+    "fb_ok": "Correcto. Al entrar a un medio con mayor n, v disminuye (v = c/n) y λ también disminuye (λ = v/f).",
+    "fb_mal": "Error: pensar que λ aumenta porque 'la luz se frena'.",
+    "tip": "Mayor n → menor v y menor λ. f nunca cambia.",
+    "fuente": "PAES 2023"
+  },
+  {
+    "texto": "¿Cuál de los siguientes fenómenos demuestra el comportamiento corpuscular (de partícula) de la luz?",
+    "formula": null,
+    "opciones": ["Difracción", "Interferencia", "Efecto fotoeléctrico", "Refracción"],
+    "correcta": 2,
+    "label": "Dualidad onda-partícula",
+    "fb_ok": "Correcto. El efecto fotoeléctrico (Einstein, 1905) demostró que la luz se comporta como fotones con energía E = h·f.",
+    "fb_mal": "Error: confundir fenómenos. Difracción, interferencia y refracción demuestran comportamiento ondulatorio.",
+    "tip": "Onda → interferencia, difracción. Partícula → efecto fotoeléctrico.",
+    "fuente": "PAES 2023"
+  },
+  {
+    "texto": "Un grupo de estudiantes hace incidir dos rayos luminosos de diferente color con el mismo ángulo sobre una superficie de agua. Observan que se refractan con ángulos distintos. ¿Qué pregunta de investigación surge directamente?",
+    "formula": null,
+    "opciones": [
+      "¿Cómo influye el ángulo de incidencia en el ángulo de refracción?",
+      "¿Cómo influye el medio en el ángulo de refracción?",
+      "¿Qué relación hay entre la frecuencia del rayo y el ángulo de refracción?",
+      "¿Qué relación hay entre la intensidad del rayo y el ángulo de refracción?"
+    ],
+    "correcta": 2,
+    "label": "Refracción y frecuencia",
+    "fb_ok": "Correcto. Lo que diferencia los rayos es su frecuencia (color). Por lo tanto, la pregunta debe apuntar a esa variable.",
+    "fb_mal": "Error: pensar que el medio es la variable. El medio es el mismo para ambos rayos.",
+    "tip": "El índice de refracción depende de la frecuencia (dispersión).",
+    "fuente": "PAES 2025"
+  },
+  {
+    "texto": "La luz de una galaxia lejana muestra corrimiento hacia el rojo en su espectro. ¿Qué indica esto sobre su movimiento?",
+    "formula": null,
+    "opciones": [
+      "La galaxia se acerca a la Tierra",
+      "La galaxia se aleja de la Tierra",
+      "La galaxia está en reposo respecto a la Tierra",
+      "La galaxia emite solo luz roja"
+    ],
+    "correcta": 1,
+    "label": "Doppler luminoso",
+    "fb_ok": "Correcto. Corrimiento al rojo significa que la longitud de onda percibida es mayor que la emitida → la fuente se aleja.",
+    "fb_mal": "Error: pensar que el rojo significa 'caliente' o 'cerca'.",
+    "tip": "Redshift (rojo) = alejamiento. Blueshift (azul) = acercamiento.",
+    "fuente": "PAES 2024"
+  },
+  {
+    "texto": "¿Cuál de los siguientes dispositivos utiliza el principio de reflexión total interna para transmitir información a larga distancia?",
+    "formula": null,
+    "opciones": ["Telescopio refractor", "Fibra óptica", "Prismáticos", "Láser"],
+    "correcta": 1,
+    "label": "Dispositivos tecnológicos",
+    "fb_ok": "Correcto. La fibra óptica usa reflexión total interna para que la luz viaje por el núcleo sin pérdidas.",
+    "fb_mal": "Error: pensar que el láser o los prismáticos usan reflexión total interna (los prismáticos sí, pero no para transmitir información a distancia).",
+    "tip": "Fibra óptica: reflexión total interna continua.",
+    "fuente": "PAES 2023"
+  },
+  {
+    "texto": "¿Cuál de las siguientes afirmaciones sobre la luz es INCORRECTA?",
+    "formula": null,
+    "opciones": [
+      "La luz puede comportarse como onda y como partícula",
+      "La luz viaja más rápido en el agua que en el vacío",
+      "La luz visible es una parte pequeña del espectro EM",
+      "La luz puede sufrir difracción e interferencia"
+    ],
+    "correcta": 1,
+    "label": "Naturaleza de la luz",
+    "fb_ok": "Correcto. Esta afirmación es falsa. La luz viaja MÁS RÁPIDO en el vacío (c = 3×10⁸ m/s) que en cualquier medio material.",
+    "fb_mal": "Error: pensar que el agua es 'transparente' y por eso la luz va más rápido.",
+    "tip": "En cualquier medio, v = c/n < c (n ≥ 1).",
+    "fuente": "PAES 2024"
+  },
+  {
+    "texto": "Un haz de luz láser de color rojo tiene longitud de onda λ = 650 nm en el vacío. Si entra a un vidrio con n = 1,5, ¿cuál es aproximadamente su nueva longitud de onda?",
+    "formula": "λ' = λ/n",
+    "opciones": ["650 nm", "433 nm", "975 nm", "325 nm"],
+    "correcta": 1,
+    "label": "Longitud de onda en medios",
+    "fb_ok": "Correcto. λ' = λ/n = 650/1,5 ≈ 433 nm. Se acerca al violeta, pero el color no cambia (la frecuencia es la que determina el color).",
+    "fb_mal": "Error: pensar que el color cambia. El color lo determina la frecuencia, que no cambia.",
+    "tip": "λ' = λ₀/n. Cálculo mental: 650 × 2/3 = 433.",
+    "fuente": "Preuniversitario UC"
+  },
+  {
+    "texto": "¿Qué fenómeno explica la formación del arcoíris?",
+    "formula": null,
+    "opciones": [
+      "Reflexión total interna en las gotas de agua",
+      "Refracción, reflexión interna y dispersión en las gotas de agua",
+      "Difracción de la luz en las nubes",
+      "Interferencia entre la luz solar y la luz reflejada"
+    ],
+    "correcta": 1,
+    "label": "Dispersión",
+    "fb_ok": "Correcto. El arcoíris se forma por refracción al entrar a la gota, reflexión interna en la pared posterior, y refracción al salir, con dispersión en cada refracción.",
+    "fb_mal": "Error: pensar que solo es refracción o solo reflexión.",
+    "tip": "Arcoíris: refracción + reflexión + dispersión.",
+    "fuente": "PAES 2023"
+  },
+  {
+    "texto": "¿Cuál de las siguientes ondas tiene MENOR longitud de onda?",
+    "formula": null,
+    "opciones": ["Microondas", "Luz infrarroja", "Luz ultravioleta", "Ondas de radio FM"],
+    "correcta": 2,
+    "label": "Espectro EM",
+    "fb_ok": "Correcto. Orden de menor a mayor λ: UV < visible < IR < microondas < radio.",
+    "fb_mal": "Error: pensar que las microondas tienen menor λ que la luz.",
+    "tip": "Mayor frecuencia → menor λ. UV tiene mayor f que IR y microondas.",
+    "fuente": ""
+  },
+
+  // ==================== CAPÍTULO 6: ÓPTICA GEOMÉTRICA (12 preguntas) ====================
+  {
+    "texto": "Un objeto está a 30 cm de un espejo plano. ¿A qué distancia detrás del espejo se forma la imagen?",
+    "formula": null,
+    "opciones": ["15 cm", "30 cm", "60 cm", "La imagen no se forma"],
+    "correcta": 1,
+    "label": "Espejos planos",
+    "fb_ok": "Correcto. En un espejo plano, la imagen está a la misma distancia detrás del espejo que el objeto delante.",
+    "fb_mal": "Error: pensar que la distancia se reduce a la mitad.",
+    "tip": "dᵢ = d₀. Imagen virtual, derecha, mismo tamaño.",
+    "fuente": "PAES 2023"
+  },
+  {
+    "texto": "La imagen formada por un espejo plano siempre es:",
+    "formula": null,
+    "opciones": [
+      "Real, invertida y del mismo tamaño",
+      "Virtual, derecha y del mismo tamaño",
+      "Real, derecha y más pequeña",
+      "Virtual, invertida y más grande"
+    ],
+    "correcta": 1,
+    "label": "Espejos planos",
+    "fb_ok": "Correcto. Espejo plano: VDI → Virtual, Derecha, Igual tamaño.",
+    "fb_mal": "Error: confundir con espejos curvos o lentes.",
+    "tip": "Memoriza: VDI (Virtual, Derecha, Igual).",
+    "fuente": "PAES 2024"
+  },
+  {
+    "texto": "Un profesor toma una fotografía de un objeto frente a un espejo cóncavo y observa que NO aparece la imagen del objeto en la fotografía. ¿En qué posición estaba el objeto?",
+    "formula": null,
+    "opciones": [
+      "Entre el foco y el espejo",
+      "En el foco del espejo",
+      "En el centro de curvatura",
+      "Más allá del centro de curvatura"
+    ],
+    "correcta": 1,
+    "label": "Espejos cóncavos",
+    "fb_ok": "Correcto. Cuando el objeto está en el foco, los rayos reflejados salen paralelos y no convergen → no se forma imagen.",
+    "fb_mal": "Error: pensar que entre el foco y el espejo tampoco forma imagen (sí forma, virtual y mayor).",
+    "tip": "Objeto en el foco → NO hay imagen.",
+    "fuente": "PAES 2025"
+  },
+  {
+    "texto": "Un objeto se coloca entre el centro de curvatura C y el foco F de un espejo cóncavo. ¿Qué características tiene la imagen formada?",
+    "formula": null,
+    "opciones": [
+      "Real, invertida y menor",
+      "Real, invertida y mayor",
+      "Virtual, derecha y mayor",
+      "Virtual, derecha y menor"
+    ],
+    "correcta": 1,
+    "label": "Espejos cóncavos",
+    "fb_ok": "Correcto. Entre C y F: imagen real, invertida y MAYOR (principio del proyector).",
+    "fb_mal": "Error: confundir con la zona entre F y V (virtual y mayor) o más allá de C (real y menor).",
+    "tip": "Entre C y F → real, invertida, mayor.",
+    "fuente": "Preuniversitario UC"
+  },
+  {
+    "texto": "Un objeto está frente a un espejo convexo. ¿Qué características tiene su imagen?",
+    "formula": null,
+    "opciones": [
+      "Siempre real, derecha y menor",
+      "Siempre virtual, derecha y menor",
+      "Siempre virtual, invertida y mayor",
+      "Depende de la distancia del objeto"
+    ],
+    "correcta": 1,
+    "label": "Espejos convexos",
+    "fb_ok": "Correcto. El espejo convexo SIEMPRE forma imágenes virtuales, derechas y menores, sin importar la posición del objeto.",
+    "fb_mal": "Error: pensar que puede formar imagen real o de mayor tamaño.",
+    "tip": "Convexo = siempre VDM (Virtual, Derecha, Menor).",
+    "fuente": "PAES 2024"
+  },
+  {
+    "texto": "¿Cuál es la relación entre la distancia focal f y el radio de curvatura R de un espejo esférico?",
+    "formula": "f = R/2",
+    "opciones": ["f = R", "f = 2R", "f = R/2", "f = R²"],
+    "correcta": 2,
+    "label": "Espejos curvos",
+    "fb_ok": "Correcto. f = R/2. El foco está en el punto medio entre el vértice y el centro de curvatura.",
+    "fb_mal": "Error: confundir con lentes o pensar que f = R.",
+    "tip": "f = R/2, válido para espejos cóncavos y convexos.",
+    "fuente": ""
+  },
+  {
+    "texto": "Una lente convergente tiene una distancia focal de 10 cm. ¿Dónde debe colocarse un objeto para obtener una imagen virtual, derecha y aumentada?",
+    "formula": null,
+    "opciones": [
+      "A más de 20 cm de la lente",
+      "A 20 cm de la lente",
+      "Entre 10 cm y 20 cm de la lente",
+      "A menos de 10 cm de la lente"
+    ],
+    "correcta": 3,
+    "label": "Lentes convergentes",
+    "fb_ok": "Correcto. Cuando el objeto está dentro de la distancia focal (d₀ < f), la imagen es virtual, derecha y mayor (lupa).",
+    "fb_mal": "Error: pensar que entre f y 2f da virtual (da real e invertida).",
+    "tip": "Lupa = objeto dentro del foco.",
+    "fuente": "PAES 2025"
+  },
+  {
+    "texto": "Una lente divergente (bicóncava) siempre forma imágenes:",
+    "formula": null,
+    "opciones": [
+      "Reales, invertidas y menores",
+      "Virtuales, derechas y menores",
+      "Reales, derechas y mayores",
+      "Depende de la posición del objeto"
+    ],
+    "correcta": 1,
+    "label": "Lentes divergentes",
+    "fb_ok": "Correcto. La lente divergente SIEMPRE forma imágenes virtuales, derechas y menores.",
+    "fb_mal": "Error: pensar que puede formar imagen real o de mayor tamaño.",
+    "tip": "Divergente = siempre VDM (Virtual, Derecha, Menor).",
+    "fuente": "PAES 2024"
+  },
+  {
+    "texto": "Una persona con miopía tiene dificultad para ver objetos lejanos con claridad. ¿Qué tipo de lente corrige este defecto?",
+    "formula": null,
+    "opciones": [
+      "Lente convergente, porque acerca el punto focal a la retina",
+      "Lente divergente, porque aleja el punto focal hacia la retina",
+      "Lente convergente, porque aumenta el tamaño de la imagen",
+      "Lente divergente, porque disminuye el tamaño de la imagen"
+    ],
+    "correcta": 1,
+    "label": "Ojo humano",
+    "fb_ok": "Correcto. En la miopía, la imagen se forma antes de la retina. Una lente divergente aleja el punto focal, llevándolo a la retina.",
+    "fb_mal": "Error: pensar que la miopía se corrige con lente convergente (eso es para hipermetropía).",
+    "tip": "Miopía → lente divergente. Hipermetropía → lente convergente.",
+    "fuente": "PAES 2023"
+  },
+  {
+    "texto": "Una persona con hipermetropía tiene dificultad para ver objetos cercanos. ¿Qué tipo de lente corrige este defecto?",
+    "formula": null,
+    "opciones": [
+      "Lente convergente, porque acerca el punto focal a la retina",
+      "Lente divergente, porque aleja el punto focal hacia la retina",
+      "Lente convergente, porque aleja el punto focal",
+      "Lente divergente, porque acerca el punto focal"
+    ],
+    "correcta": 0,
+    "label": "Ojo humano",
+    "fb_ok": "Correcto. En la hipermetropía, la imagen se forma detrás de la retina. Una lente convergente acerca el punto focal, llevándolo a la retina.",
+    "fb_mal": "Error: confundir con la corrección de la miopía.",
+    "tip": "Miopía → divergente. Hipermetropía → convergente.",
+    "fuente": "PAES 2024"
+  },
+  {
+    "texto": "¿Qué tipo de espejo se usa en los retrovisores de los automóviles para tener un mayor campo visual?",
+    "formula": null,
+    "opciones": ["Espejo plano", "Espejo cóncavo", "Espejo convexo", "Espejo parabólico"],
+    "correcta": 2,
+    "label": "Espejos convexos",
+    "fb_ok": "Correcto. Los espejos convexos tienen un campo visual más amplio que los planos, aunque las imágenes se ven más pequeñas.",
+    "fb_mal": "Error: pensar que el cóncavo da mayor campo (da imágenes más grandes pero menor campo).",
+    "tip": "Convexo: más campo visual, imágenes más pequeñas.",
+    "fuente": ""
+  },
+  {
+    "texto": "Un recipiente cilíndrico de vidrio lleno de agua actúa como lente convergente. Una persona introduce su mano y la observa a través del recipiente: la imagen NO está invertida y es de mayor tamaño. ¿Dónde está la mano?",
+    "formula": null,
+    "opciones": [
+      "Fuera de la distancia focal",
+      "Dentro de la distancia focal (entre el foco y la lente)",
+      "En el foco del sistema",
+      "En el centro de curvatura"
+    ],
+    "correcta": 1,
+    "label": "Lentes convergentes",
+    "fb_ok": "Correcto. Para que una lente convergente produzca una imagen virtual, derecha y mayor, el objeto debe estar dentro de la distancia focal.",
+    "fb_mal": "Error: pensar que fuera del foco da imagen derecha (da invertida).",
+    "tip": "Lupa: objeto dentro del foco.",
+    "fuente": "PAES 2025"
+  }
+];
+
+
+// ═══════════════════════════════════════════════════════════════
+// LÓGICA DEL CONTROL (NO MODIFICAR)
+// ═══════════════════════════════════════════════════════════════
+let rut = "", actual = 0, elegidas = new Array(preguntas.length).fill(null);
+const letras = ["A", "B", "C", "D"];
+
+document.getElementById('rut-input').addEventListener('input', function(e) { e.target.value = e.target.value.replace(/\D/g, ''); });
+document.getElementById('rut-input').addEventListener('keydown', function(e) { if (e.key === 'Enter') startQuiz(); });
+
+function startQuiz() {
+  const val = document.getElementById('rut-input').value.trim();
+  const err = document.getElementById('rut-error');
+  if (val.length < 7) { err.style.display = 'block'; return; }
+  err.style.display = 'none';
+  rut = val;
+  document.getElementById('screen-rut').style.display = 'none';
+  document.getElementById('screen-quiz').style.display = 'block';
+  renderPregunta();
+}
+
+function renderPregunta() {
+  const q = preguntas[actual];
+  document.getElementById('prog').style.width = ((actual / preguntas.length) * 100) + '%';
+  document.getElementById('prog-label').textContent = (actual + 1) + ' / ' + preguntas.length;
+  document.getElementById('aviso').style.display = 'none';
+
+  const formula = q.formula ? `<div class="q-formula">${q.formula}</div>` : '';
+  const opts = q.opciones.map((o, i) => {
+    const sel = elegidas[actual] === i ? 'selected' : '';
+    return `<div class="opt ${sel}" id="opt-${i}" onclick="elegir(${i})">
+      <div class="opt-circle">${letras[i]}</div>
+      <div class="opt-text">${o}</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('question-card').innerHTML = `
+    <div class="q-meta">
+      <div class="q-num">Pregunta ${actual + 1} de ${preguntas.length}</div>
+      <div class="q-tag">${q.label}</div>
+    </div>
+    <div class="q-text">${q.texto}</div>
+    ${formula}
+    <div class="options">${opts}</div>
+  `;
+
+  document.getElementById('nav-btn').innerHTML = `
+    <button class="btn" onclick="siguiente()">${actual === preguntas.length - 1 ? 'Ver mis resultados →' : 'Siguiente →'}</button>
+  `;
+}
+
+function elegir(idx) {
+  elegidas[actual] = idx;
+  document.querySelectorAll('.opt').forEach((o, i) => o.classList.toggle('selected', i === idx));
+  document.getElementById('aviso').style.display = 'none';
+}
+
+function siguiente() {
+  if (elegidas[actual] === null) { document.getElementById('aviso').style.display = 'block'; return; }
+  actual++;
+  if (actual >= preguntas.length) mostrarResultados();
+  else renderPregunta();
+}
+
+function mostrarResultados() {
+  document.getElementById('screen-quiz').style.display = 'none';
+  document.getElementById('screen-results').style.display = 'block';
+
+  let correctas = 0;
+  preguntas.forEach((q, i) => { if (elegidas[i] === q.correcta) correctas++; });
+  const pct = Math.round((correctas / preguntas.length) * 100);
+
+  document.getElementById('score-num').textContent = pct + '%';
+  document.getElementById('score-sub').textContent = correctas + ' de ' + preguntas.length + ' preguntas correctas';
+  document.getElementById('st-v').textContent = correctas;
+  document.getElementById('st-r').textContent = preguntas.length - correctas;
+  document.getElementById('st-p').textContent = correctas + '/' + preguntas.length;
+
+  const detalle = preguntas.map((q, i) => {
+    const ok = elegidas[i] === q.correcta;
+    const cls = ok ? 'ok' : 'bad';
+    const elegidaTexto = `Tu respuesta: ${letras[elegidas[i]]}. ${q.opciones[elegidas[i]]}`;
+    const correctaTexto = `Correcta: ${letras[q.correcta]}. ${q.opciones[q.correcta]}`;
+    const cuerpo = ok
+      ? `<div class="detalle-body">${q.fb_ok}</div>`
+      : `<div class="detalle-body">
+          <div class="detalle-elegida">✗ ${elegidaTexto}</div>
+          <div class="detalle-correcta">✓ ${correctaTexto}</div>
+          ${q.fb_mal}
+          ${q.tip ? `<div class="detalle-tip">💡 ${q.tip}</div>` : ''}
+         </div>`;
+    return `<div class="detalle-item">
+      <div class="detalle-header ${cls}">
+        <div class="detalle-icono ${cls}">${ok ? '✓' : '✗'}</div>
+        <div class="detalle-label ${cls}">P${i+1} — ${q.label}</div>
+      </div>
+      ${cuerpo}
+    </div>`;
+  }).join('');
+  document.getElementById('detalle-items').innerHTML = detalle;
+
+  enviarSheet(correctas, pct);
+}
+
+function enviarSheet(correctas, pct) {
+  if (!CONFIG.sheet_url || CONFIG.sheet_url.includes("TU_URL_AQUI")) {
+    console.warn("⚠ Configura la URL del Apps Script en CONFIG.sheet_url");
+    return;
+  }
+  const badge = document.getElementById('sync-badge');
+  badge.className = 'sync-badge show';
+  badge.textContent = '⏳ Guardando resultado...';
+
+  const params = new URLSearchParams({
+    modo: "guardar",
+    control_id: CONFIG.control_id,
+    control_tema: CONFIG.control_tema,
+    rut: rut,
+    fecha: new Date().toLocaleString('es-CL'),
+    correctas: correctas,
+    total: preguntas.length,
+    porcentaje: pct
+  });
+
+  const url = CONFIG.sheet_url + '?' + params.toString();
+  const img = new Image();
+  img.onload = img.onerror = function() { badge.textContent = '✓ Resultado guardado en Drive'; };
+  img.src = url;
+}
+
+function restart() {
+  actual = 0;
+  elegidas = new Array(preguntas.length).fill(null);
+  document.getElementById('screen-results').style.display = 'none';
+  document.getElementById('screen-quiz').style.display = 'block';
+  renderPregunta();
+}
+</script>
+</body>
+</html>
