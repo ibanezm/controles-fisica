@@ -148,310 +148,411 @@ const CONFIG = {
 // BANCO DE 30 PREGUNTAS (Capítulos 3 y 4: Ondas y Sonido)
 // ═══════════════════════════════════════════════════════════════
 const preguntas = [
-  // ==================== ONDAS (20 preguntas) ====================
+  // ==================== ONDAS (20 preguntas estilo PAES) ====================
   {
-    "texto": "¿Qué sucede siempre con las partículas del medio material por el que se propaga una onda mecánica viajera?",
-    "formula": null,
-    "opciones": ["Viajan junto con la onda", "Permanecen inmóviles cuando pasa la onda", "Se deforman permanentemente", "Oscilan alrededor de su posición de equilibrio"],
-    "correcta": 3,
-    "label": "Naturaleza de las ondas",
-    "fb_ok": "Correcto. Las partículas del medio oscilan alrededor de su posición de equilibrio cuando pasa la onda, pero no se desplazan con ella.",
-    "fb_mal": "Incorrecto. Las partículas del medio oscilan alrededor de su posición de equilibrio, pero NO viajan con la onda. La onda transporta energía, no materia.",
-    "tip": "Clave PAES: las ondas NO transportan materia. Las partículas oscilan, no viajan."
-  },
-  {
-    "texto": "¿Qué característica distingue fundamentalmente a una onda electromagnética de una onda mecánica?",
-    "formula": null,
-    "opciones": ["Su capacidad de transportar energía", "Su necesidad de un emisor para existir", "Su capacidad de propagarse en el vacío", "Su amplitud constante"],
-    "correcta": 2,
-    "label": "Clasificación de ondas",
-    "fb_ok": "Correcto. Las ondas electromagnéticas pueden propagarse en el vacío; las mecánicas necesitan un medio material.",
-    "fb_mal": "Incorrecto. Las ondas electromagnéticas (luz, radio) NO necesitan medio; las mecánicas (sonido, ondas en cuerdas) SÍ necesitan medio material.",
-    "tip": "Pregunta clásica PAES: el sonido NO viaja en el vacío; la luz SÍ."
-  },
-  {
-    "texto": "¿Qué tipo de ondas se caracterizan por una dirección de vibración perpendicular a la dirección de propagación?",
-    "formula": null,
-    "opciones": ["Longitudinales", "Transversales", "Mecánicas", "Estacionarias"],
+    "texto": "Una onda periódica de frecuencia 25 Hz completa 20 oscilaciones en una distancia de 8 m. ¿Cuál es su rapidez de propagación?",
+    "formula": "v = λ·f",
+    "opciones": ["2 m/s", "10 m/s", "40 m/s", "200 m/s"],
     "correcta": 1,
-    "label": "Clasificación de ondas",
-    "fb_ok": "Correcto. En las ondas transversales, las partículas vibran perpendicularmente a la dirección de propagación.",
-    "fb_mal": "Incorrecto. Transversal = vibración ⊥ propagación. Longitudinal = vibración ∥ propagación.",
-    "tip": "Transversal: piensa en una cuerda agitada arriba-abajo mientras la onda avanza horizontalmente."
+    "label": "Ecuación v = λf",
+    "fb_ok": "Correcto. λ = 8 m / 20 = 0,4 m. v = 0,4 × 25 = 10 m/s.",
+    "fb_mal": "Error frecuente: usar 8 m como λ. λ se obtiene dividiendo la distancia total por el número de oscilaciones.",
+    "tip": "λ = distancia total / número de oscilaciones. Luego v = λf.",
+    "fuente": "PAES 2023"
   },
   {
-    "texto": "En un gráfico desplazamiento (y) vs. posición (x) de una onda periódica, la distancia entre dos crestas consecutivas corresponde a:",
+    "texto": "Una onda se propaga con rapidez V, longitud de onda λ y período T. Al cambiar a un medio donde su rapidez es 2V, su nueva longitud de onda y su nuevo período son respectivamente:",
     "formula": null,
-    "opciones": ["La amplitud", "La longitud de onda", "El período", "La frecuencia"],
-    "correcta": 1,
-    "label": "Parámetros de una onda",
-    "fb_ok": "Correcto. La longitud de onda (λ) es la distancia entre dos puntos consecutivos en la misma fase.",
-    "fb_mal": "Incorrecto. La distancia cresta a cresta es la longitud de onda. El período se lee en un gráfico y vs. tiempo.",
-    "tip": "Gráfico y vs. x → lees λ. Gráfico y vs. t → lees T."
-  },
-  {
-    "texto": "Una onda tiene frecuencia 8 Hz. ¿Cuál es su período?",
-    "formula": "T = 1/f",
-    "opciones": ["8 s", "4 s", "0,5 s", "0,125 s"],
-    "correcta": 3,
-    "label": "Parámetros de una onda",
-    "fb_ok": "Correcto. T = 1/f = 1/8 = 0,125 s.",
-    "fb_mal": "Incorrecto. El período es el inverso de la frecuencia: T = 1/f.",
-    "tip": "T = 1/f. Si f es grande, T es pequeño."
-  },
-  {
-    "texto": "Una onda sonora viaja en el aire a 340 m/s con frecuencia 680 Hz. ¿Cuál es su longitud de onda?",
-    "formula": "v = λ·f → λ = v/f",
-    "opciones": ["0,2 m", "0,5 m", "2 m", "5 m"],
-    "correcta": 1,
-    "label": "Ecuación v = λ·f",
-    "fb_ok": "Correcto. λ = v/f = 340/680 = 0,5 m.",
-    "fb_mal": "Incorrecto. λ = v/f. Recuerda despejar antes de calcular.",
-    "tip": "v = λf → λ = v/f. Verifica unidades: m/s ÷ Hz = m."
-  },
-  {
-    "texto": "Una onda se propaga con rapidez V, longitud de onda λ y frecuencia f. Al pasar a otro medio, su rapidez se reduce a V/2. ¿Qué ocurre con su frecuencia y longitud de onda?",
-    "formula": null,
-    "opciones": ["f se duplica, λ se mantiene", "f se mantiene, λ se reduce a la mitad", "f se reduce a la mitad, λ se mantiene", "f se mantiene, λ se duplica"],
+    "opciones": ["λ/2 y T", "2λ y T", "λ y T/2", "2λ y 2T"],
     "correcta": 1,
     "label": "Cambio de medio",
-    "fb_ok": "Correcto. La frecuencia depende de la fuente, no cambia. Como v = λ·f, si v se reduce a la mitad, λ también.",
-    "fb_mal": "Incorrecto. La frecuencia NO cambia al cambiar de medio. Solo v y λ cambian.",
-    "tip": "Regla de oro: al cambiar de medio, f y T NO cambian. Solo v y λ cambian."
+    "fb_ok": "Correcto. La frecuencia no cambia, por lo tanto T tampoco. Como v = λf, si v se duplica y f constante, λ se duplica.",
+    "fb_mal": "Error común: pensar que el período también cambia. La frecuencia la fija la fuente, no cambia al cambiar de medio.",
+    "tip": "Al cambiar de medio: f y T NO cambian. Solo v y λ cambian proporcionalmente.",
+    "fuente": "PAES 2023"
   },
   {
-    "texto": "Un rayo de luz incide sobre un espejo plano con un ángulo de 30° respecto a la normal. ¿Con qué ángulo se refleja?",
-    "formula": "θᵢ = θᵣ",
-    "opciones": ["0°", "15°", "30°", "60°"],
-    "correcta": 2,
-    "label": "Reflexión",
-    "fb_ok": "Correcto. La ley de reflexión establece que θᵢ = θᵣ.",
-    "fb_mal": "Incorrecto. El ángulo de reflexión es igual al de incidencia, ambos medidos respecto a la normal.",
-    "tip": "θᵢ = θᵣ siempre. No confundir con el ángulo respecto a la superficie."
-  },
-  {
-    "texto": "Un rayo de luz pasa del aire (n≈1) al agua (n=1,33). ¿Qué ocurre con su dirección?",
+    "texto": "¿Cuál de las siguientes afirmaciones es correcta respecto al gráfico desplazamiento vs. posición (y vs. x) de una onda viajera?",
     "formula": null,
-    "opciones": ["Se aleja de la normal", "Se acerca a la normal", "No cambia de dirección", "Se refleja totalmente"],
+    "opciones": [
+      "La pendiente de la recta tangente en un punto es la velocidad de la onda",
+      "La distancia entre dos crestas consecutivas es la longitud de onda",
+      "La altura máxima de la curva es el período",
+      "El área bajo la curva es la energía transportada"
+    ],
     "correcta": 1,
-    "label": "Refracción",
-    "fb_ok": "Correcto. Al entrar a un medio más denso (mayor n), la luz disminuye su rapidez y se acerca a la normal.",
-    "fb_mal": "Incorrecto. Mayor n → menor velocidad → rayo se acerca a la normal.",
-    "tip": "Más denso (mayor n) → se acerca a la normal. Menos denso → se aleja."
+    "label": "Gráficos de ondas",
+    "fb_ok": "Correcto. En un gráfico y vs. x, la distancia entre dos crestas consecutivas es λ.",
+    "fb_mal": "Error: confundir gráfico y vs. x (λ) con y vs. t (T). La pendiente NO es la velocidad de la onda.",
+    "tip": "y vs. x → lees λ (distancia). y vs. t → lees T (tiempo).",
+    "fuente": "PAES 2024"
   },
   {
-    "texto": "¿Cuál de las siguientes situaciones ejemplifica mejor la difracción?",
+    "texto": "Una onda sonora pasa del aire al agua. ¿Cuál(es) de las siguientes afirmaciones es(son) correcta(s)?\n\nI. La rapidez de propagación aumenta.\nII. La frecuencia permanece constante.\nIII. La longitud de onda disminuye.",
     "formula": null,
-    "opciones": ["Escuchar música detrás de una puerta entreabierta", "Ver tu reflejo en un espejo", "La formación del arcoíris", "El eco de tu voz en un cañón"],
-    "correcta": 0,
-    "label": "Difracción",
-    "fb_ok": "Correcto. La difracción permite que las ondas rodeen obstáculos. El sonido se difracta al pasar por la rendija.",
-    "fb_mal": "Incorrecto. La difracción es la capacidad de las ondas para rodear obstáculos o expandirse al pasar por una abertura.",
-    "tip": "Difracción: la onda 'dobla la esquina'. Se nota más cuando λ es grande."
-  },
-  {
-    "texto": "Dos ondas idénticas se superponen en un punto con diferencia de fase de 180°. ¿Qué tipo de interferencia ocurre?",
-    "formula": null,
-    "opciones": ["Constructiva, amplitud doble", "Constructiva, amplitud nula", "Destructiva, amplitud nula", "Destructiva, amplitud doble"],
+    "opciones": ["Solo I", "Solo II", "I y II", "II y III"],
     "correcta": 2,
-    "label": "Interferencia",
-    "fb_ok": "Correcto. En contrafase (180°), las amplitudes se cancelan: interferencia destructiva.",
-    "fb_mal": "Incorrecto. En fase (0°) → constructiva (suma). Contrafase (180°) → destructiva (cancela).",
-    "tip": "En fase → constructiva. Contrafase → destructiva."
+    "label": "Cambio de medio",
+    "fb_ok": "Correcto. v aumenta (agua > aire), f constante (depende de la fuente), λ aumenta (λ = v/f). La III es falsa porque λ aumenta, no disminuye.",
+    "fb_mal": "Error común: pensar que la frecuencia cambia al cambiar de medio. La frecuencia la determina la fuente, no el medio.",
+    "tip": "En el agua el sonido viaja más rápido (~1500 m/s) que en el aire (~340 m/s).",
+    "fuente": "PAES 2024"
   },
   {
-    "texto": "Un automóvil se acerca a una persona con su bocina sonando. ¿Cómo percibe la persona la frecuencia?",
+    "texto": "Un estudiante realiza el experimento de la doble rendija con luz láser. Observa que al disminuir la separación entre las rendijas, las franjas de interferencia se separan más. ¿Qué conclusión es correcta?",
     "formula": null,
-    "opciones": ["Mayor que la real", "Igual que la real", "Menor que la real", "Depende del volumen"],
-    "correcta": 0,
-    "label": "Efecto Doppler",
-    "fb_ok": "Correcto. Cuando la fuente se acerca, las ondas se comprimen: frecuencia percibida mayor.",
-    "fb_mal": "Incorrecto. Acercamiento → más agudo (mayor f). Alejamiento → más grave (menor f).",
-    "tip": "Acercamiento → frecuencia mayor. Alejamiento → frecuencia menor."
+    "opciones": [
+      "La luz se comporta como partícula en este experimento",
+      "La separación entre franjas es inversamente proporcional a la separación de las rendijas",
+      "La longitud de onda de la luz aumenta al separar las rendijas",
+      "El experimento demuestra que la luz no sufre difracción"
+    ],
+    "correcta": 1,
+    "label": "Interferencia",
+    "fb_ok": "Correcto. En el experimento de Young, la separación entre franjas es inversamente proporcional a la distancia entre rendijas.",
+    "fb_mal": "Error: pensar que la luz cambia su longitud de onda. La λ es fija, lo que cambia es el patrón de interferencia.",
+    "tip": "Menor separación entre rendijas → franjas más separadas.",
+    "fuente": "Preuniversitario UC"
   },
   {
-    "texto": "En un gráfico desplazamiento vs. tiempo, una onda completa 5 ciclos en 10 segundos. ¿Cuál es su frecuencia?",
+    "texto": "Una onda electromagnética pasa del vacío a un medio material con índice de refracción n = 1,5. ¿Qué ocurre con su frecuencia, longitud de onda y rapidez?",
+    "formula": null,
+    "opciones": [
+      "f constante, λ disminuye, v disminuye",
+      "f aumenta, λ constante, v aumenta",
+      "f disminuye, λ aumenta, v constante",
+      "f constante, λ aumenta, v aumenta"
+    ],
+    "correcta": 0,
+    "label": "Ondas EM en medios",
+    "fb_ok": "Correcto. f no cambia. v = c/n disminuye. λ = v/f también disminuye.",
+    "fb_mal": "Error común: pensar que la frecuencia cambia. La frecuencia es una propiedad de la fuente, no del medio.",
+    "tip": "n > 1 → v < c → λ < λ₀ (en el vacío).",
+    "fuente": "PAES 2023"
+  },
+  {
+    "texto": "Un observador estacionario escucha la sirena de un automóvil. El automóvil se acerca con rapidez constante y luego se aleja con la misma rapidez. ¿Cómo cambia la frecuencia percibida?",
+    "formula": null,
+    "opciones": [
+      "Siempre mayor que la emitida",
+      "Siempre menor que la emitida",
+      "Primero mayor, luego igual, luego menor",
+      "Primero mayor, luego menor"
+    ],
+    "correcta": 3,
+    "label": "Efecto Doppler",
+    "fb_ok": "Correcto. Al acercarse: f percibida > f emitida. Al alejarse: f percibida < f emitida.",
+    "fb_mal": "Error: pensar que la frecuencia es siempre mayor o siempre menor. Depende del movimiento relativo.",
+    "tip": "Acercamiento → más agudo. Alejamiento → más grave.",
+    "fuente": "PAES 2023"
+  },
+  {
+    "texto": "La siguiente tabla muestra datos de fotones de diferentes tipos de radiación:\n\n| Radiación | f (Hz) | λ (m) |\n|-----------|--------|-------|\n| Rayos γ | 3×10¹⁹ | 1×10⁻¹¹ |\n| Luz visible | 6×10¹⁴ | 5×10⁻⁷ |\n| Ondas de radio | 1×10⁸ | 3 |\n\n¿Cuál afirmación es correcta según la tabla?",
+    "formula": null,
+    "opciones": [
+      "A mayor frecuencia, mayor longitud de onda",
+      "A mayor frecuencia, menor longitud de onda",
+      "La frecuencia y la longitud de onda son independientes",
+      "Todos los fotones tienen la misma energía"
+    ],
+    "correcta": 1,
+    "label": "Relación f y λ",
+    "fb_ok": "Correcto. La tabla muestra que rayos γ (f más alta) tienen λ más pequeña, y ondas de radio (f más baja) tienen λ más grande.",
+    "fb_mal": "Error: confundir la relación inversa entre f y λ (f·λ = c).",
+    "tip": "f ↑ → λ ↓ (inversamente proporcionales).",
+    "fuente": "PAES 2023"
+  },
+  {
+    "texto": "Una onda en una cuerda tiene una rapidez de 24 m/s y una frecuencia de 8 Hz. ¿Cuál es su longitud de onda?",
+    "formula": "λ = v/f",
+    "opciones": ["0,33 m", "3 m", "192 m", "32 m"],
+    "correcta": 1,
+    "label": "Ecuación v = λf",
+    "fb_ok": "Correcto. λ = v/f = 24/8 = 3 m.",
+    "fb_mal": "Error: multiplicar v·f = 192 m (eso sería si despejaste mal).",
+    "tip": "λ = v/f. Verifica que las unidades sean consistentes.",
+    "fuente": "PAES 2024"
+  },
+  {
+    "texto": "¿Qué fenómeno ondulatorio explica que podamos escuchar una conversación detrás de una puerta entreabierta?",
+    "formula": null,
+    "opciones": ["Reflexión", "Refracción", "Difracción", "Interferencia"],
+    "correcta": 2,
+    "label": "Difracción",
+    "fb_ok": "Correcto. La difracción permite que las ondas sonoras rodeen el borde de la puerta y se expandan.",
+    "fb_mal": "Error: confundir con reflexión (eco) o refracción (cambio de dirección por cambio de medio).",
+    "tip": "Difracción = la onda 'dobla la esquina'.",
+    "fuente": "PAES 2023"
+  },
+  {
+    "texto": "Dos ondas idénticas se superponen en un punto. Si la diferencia de fase entre ellas es 0°, ¿qué tipo de interferencia se produce?",
+    "formula": null,
+    "opciones": [
+      "Constructiva, con amplitud doble",
+      "Destructiva, con amplitud nula",
+      "Constructiva, con amplitud nula",
+      "Destructiva, con amplitud doble"
+    ],
+    "correcta": 0,
+    "label": "Interferencia",
+    "fb_ok": "Correcto. En fase (0°): interferencia constructiva, amplitudes se suman → amplitud = 2A.",
+    "fb_mal": "Error: confundir en fase (constructiva) con contrafase (destructiva).",
+    "tip": "En fase (0°) → constructiva. Contrafase (180°) → destructiva.",
+    "fuente": "PAES 2024"
+  },
+  {
+    "texto": "Una onda de luz reduce su rapidez a la mitad al pasar del medio X al medio Y. ¿Cuál afirmación es correcta?",
+    "formula": null,
+    "opciones": [
+      "El índice de refracción de Y es el doble que el de X",
+      "El índice de refracción de X es el doble que el de Y",
+      "La frecuencia de la luz se duplica en Y",
+      "La longitud de onda se duplica en Y"
+    ],
+    "correcta": 0,
+    "label": "Índice de refracción",
+    "fb_ok": "Correcto. n = c/v. Si v se reduce a la mitad, n se duplica. n_Y = 2·n_X.",
+    "fb_mal": "Error: pensar que la frecuencia cambia. La frecuencia NO cambia al cambiar de medio.",
+    "tip": "Menor velocidad → mayor índice de refracción.",
+    "fuente": "PAES 2025"
+  },
+  {
+    "texto": "En el gráfico de una onda (desplazamiento vs. tiempo) se observa que la onda completa 3 ciclos en 6 segundos. ¿Cuál es su frecuencia?",
     "formula": "f = ciclos/tiempo",
-    "opciones": ["0,2 Hz", "0,5 Hz", "2 Hz", "5 Hz"],
-    "correcta": 1,
-    "label": "Parámetros de una onda",
-    "fb_ok": "Correcto. f = 5/10 = 0,5 Hz.",
-    "fb_mal": "Incorrecto. f = número de ciclos / tiempo.",
-    "tip": "En un gráfico y vs. t, la frecuencia se calcula así."
+    "opciones": ["0,5 Hz", "2 Hz", "3 Hz", "6 Hz"],
+    "correcta": 0,
+    "label": "Frecuencia",
+    "fb_ok": "Correcto. f = 3 ciclos / 6 s = 0,5 Hz.",
+    "fb_mal": "Error: confundir frecuencia con período. T = 2 s, f = 1/T = 0,5 Hz.",
+    "tip": "f = número de ciclos por segundo. T = tiempo por ciclo.",
+    "fuente": "PAES 2023"
   },
   {
-    "texto": "Un tren pasa frente a una persona estacionaria. ¿Cómo cambia la frecuencia del silbato que escucha?",
+    "texto": "Una persona está en reposo y escucha una sirena. Si la fuente se aleja con rapidez v y luego el observador se aleja con rapidez v/2 (fuente en reposo), ¿en qué caso la frecuencia percibida es menor?",
     "formula": null,
-    "opciones": ["Siempre mayor", "Siempre menor", "Primero mayor, luego menor", "Primero menor, luego mayor"],
-    "correcta": 2,
+    "opciones": [
+      "Cuando la fuente se aleja con rapidez v",
+      "Cuando el observador se aleja con rapidez v/2",
+      "Ambas producen la misma disminución",
+      "Depende de la frecuencia original"
+    ],
+    "correcta": 0,
     "label": "Efecto Doppler",
-    "fb_ok": "Correcto. Al acercarse: frecuencia mayor. Al alejarse: frecuencia menor.",
-    "fb_mal": "Incorrecto. El cambio abrupto al pasar es la 'caída Doppler'.",
-    "tip": "Al pasar: agudo → grave."
+    "fb_ok": "Correcto. El efecto Doppler es mayor cuando la fuente se mueve que cuando el observador se mueve (para la misma rapidez).",
+    "fb_mal": "Error: pensar que el efecto es simétrico. No lo es: f' = f·(v_sound ± v_o)/(v_sound ∓ v_f).",
+    "tip": "El movimiento de la fuente afecta más que el del observador.",
+    "fuente": "PAES 2023"
   },
   {
-    "texto": "¿Qué fenómeno ondulatorio permite que un espejo forme una imagen?",
+    "texto": "¿Cuál de las siguientes opciones describe correctamente la diferencia entre una onda mecánica y una electromagnética?",
     "formula": null,
-    "opciones": ["Refracción", "Difracción", "Reflexión", "Interferencia"],
-    "correcta": 2,
-    "label": "Reflexión",
-    "fb_ok": "Correcto. Los espejos funcionan por reflexión de la luz.",
-    "fb_mal": "Incorrecto. Espejo → reflexión. Lente → refracción.",
-    "tip": "Espejo = reflexión. Lente = refracción."
-  },
-  {
-    "texto": "Una onda de radio tiene frecuencia 100 MHz. ¿Cuál es su longitud de onda? (c = 3×10⁸ m/s)",
-    "formula": "λ = c/f",
-    "opciones": ["0,3 m", "3 m", "30 m", "300 m"],
-    "correcta": 1,
-    "label": "Ecuación v = λ·f",
-    "fb_ok": "Correcto. f = 100×10⁶ = 10⁸ Hz. λ = 3×10⁸/10⁸ = 3 m.",
-    "fb_mal": "Incorrecto. Recuerda convertir MHz a Hz (1 MHz = 10⁶ Hz).",
-    "tip": "Siempre convierte a Hz antes de calcular."
-  },
-  {
-    "texto": "Las ondas sísmicas P son longitudinales y más rápidas que las S (transversales). ¿Por qué llegan primero?",
-    "formula": null,
-    "opciones": ["Tienen mayor amplitud", "Son longitudinales y viajan más rápido en el mismo medio", "Las S no se propagan en sólidos", "Depende solo de la frecuencia"],
+    "opciones": [
+      "Las mecánicas son siempre longitudinales; las EM siempre transversales",
+      "Las EM pueden propagarse en el vacío; las mecánicas no",
+      "Las mecánicas viajan más rápido que las EM en cualquier medio",
+      "Las EM transportan energía; las mecánicas no"
+    ],
     "correcta": 1,
     "label": "Clasificación de ondas",
-    "fb_ok": "Correcto. En un mismo medio, las ondas longitudinales suelen tener mayor rapidez.",
-    "fb_mal": "Incorrecto. P = primeras (más rápidas). S = secundarias (más lentas).",
-    "tip": "P = primeras, más rápidas. S = secundarias, más lentas."
+    "fb_ok": "Correcto. Las ondas EM (luz, radio) no necesitan medio; las mecánicas (sonido, cuerdas) sí.",
+    "fb_mal": "Error: las ondas mecánicas pueden ser transversales (cuerda) o longitudinales (sonido). Las EM siempre son transversales.",
+    "tip": "Pregunta clásica PAES: el sonido NO viaja en el vacío; la luz SÍ.",
+    "fuente": "PAES 2024"
   },
   {
-    "texto": "¿Por qué es más fácil escuchar una conversación detrás de una esquina que ver a la persona?",
-    "formula": null,
-    "opciones": ["El sonido tiene mayor frecuencia", "El sonido tiene mayor longitud de onda", "La luz no se difracta", "El sonido es más rápido"],
+    "texto": "Una onda tiene una longitud de onda de 2 m y una rapidez de 10 m/s. ¿Cuál es su frecuencia?",
+    "formula": "f = v/λ",
+    "opciones": ["0,2 Hz", "5 Hz", "12 Hz", "20 Hz"],
     "correcta": 1,
-    "label": "Difracción",
-    "fb_ok": "Correcto. El sonido (λ ~ metros) se difracta más que la luz (λ ~ nanómetros).",
-    "fb_mal": "Incorrecto. Mayor λ → mayor difracción.",
-    "tip": "Mayor longitud de onda = más difracción."
+    "label": "Ecuación v = λf",
+    "fb_ok": "Correcto. f = v/λ = 10/2 = 5 Hz.",
+    "fb_mal": "Error: multiplicar v·λ = 20 Hz (invertir la fórmula).",
+    "tip": "f = v/λ. λ = v/f. Elige la forma correcta según lo que busques.",
+    "fuente": ""
   },
   {
-    "texto": "En el experimento de la doble rendija, ¿qué producen las franjas oscuras?",
+    "texto": "Un rayo de luz incide desde el aire (n=1) al agua (n=1,33) con un ángulo de 45°. ¿Qué ocurre con el rayo refractado?",
     "formula": null,
-    "opciones": ["Interferencia constructiva", "Interferencia destructiva", "Difracción", "Reflexión"],
-    "correcta": 1,
-    "label": "Interferencia",
-    "fb_ok": "Correcto. Las franjas oscuras son interferencia destructiva (cancelación).",
-    "fb_mal": "Incorrecto. Brillante = constructiva. Oscura = destructiva.",
-    "tip": "Franjas brillantes = constructiva. Oscuras = destructiva."
+    "opciones": [
+      "Se acerca a la normal, con ángulo menor a 45°",
+      "Se aleja de la normal, con ángulo mayor a 45°",
+      "No se refracta, solo se refleja",
+      "Sigue en la misma dirección"
+    ],
+    "correcta": 0,
+    "label": "Refracción",
+    "fb_ok": "Correcto. Al entrar a un medio más denso (mayor n), el rayo se acerca a la normal. θ₂ < θ₁.",
+    "fb_mal": "Error: pensar que el rayo se aleja de la normal. Eso ocurre al pasar a un medio menos denso.",
+    "tip": "Más denso (mayor n) → se acerca a la normal.",
+    "fuente": "PAES 2025"
   },
   {
-    "texto": "Una onda luminosa pasa del aire (n=1) al vidrio (n=1,5). ¿Qué ocurre con rapidez, frecuencia y longitud de onda?",
+    "texto": "Una onda viaja de un medio A a un medio B. En A tiene rapidez V y longitud de onda λ. En B tiene rapidez V/3. ¿Cuál es su nueva longitud de onda?",
     "formula": null,
-    "opciones": ["v↓, f constante, λ↓", "v↑, f↑, λ constante", "v constante, f↓, λ↓", "v↓, f↓, λ constante"],
+    "opciones": ["λ/3", "3λ", "λ", "λ/9"],
     "correcta": 0,
     "label": "Cambio de medio",
-    "fb_ok": "Correcto. v disminuye (v=c/n), f constante (fuente), λ disminuye (v=λf).",
-    "fb_mal": "Incorrecto. Mayor n → menor v y λ. f nunca cambia.",
-    "tip": "La frecuencia NUNCA cambia al cambiar de medio."
+    "fb_ok": "Correcto. f constante, λ ∝ v. Si v se divide por 3, λ también se divide por 3.",
+    "fb_mal": "Error: pensar que λ aumenta cuando v disminuye. Son directamente proporcionales.",
+    "tip": "v ↓ → λ ↓ (f constante).",
+    "fuente": "PAES 2024"
+  },
+  {
+    "texto": "¿Cuál de las siguientes afirmaciones sobre el período de una onda es correcta?",
+    "formula": null,
+    "opciones": [
+      "Es el número de ciclos por segundo",
+      "Es el tiempo que tarda en completarse un ciclo",
+      "Es la distancia entre dos crestas consecutivas",
+      "Es inversamente proporcional a la longitud de onda"
+    ],
+    "correcta": 1,
+    "label": "Período",
+    "fb_ok": "Correcto. El período T es el tiempo que tarda una onda en completar un ciclo.",
+    "fb_mal": "Error: confundir período (T) con frecuencia (f = 1/T) o con longitud de onda (λ).",
+    "tip": "T = 1/f. Unidad: segundos (s).",
+    "fuente": ""
+  },
+  {
+    "texto": "Una onda electromagnética tiene una frecuencia de 5×10¹⁴ Hz en el vacío. Al entrar a un vidrio con n=1,5, su frecuencia será:",
+    "formula": null,
+    "opciones": ["3,33×10¹⁴ Hz", "5×10¹⁴ Hz", "7,5×10¹⁴ Hz", "Depende del ángulo de incidencia"],
+    "correcta": 1,
+    "label": "Frecuencia en medios",
+    "fb_ok": "Correcto. La frecuencia de una onda NO cambia al cambiar de medio, solo cambian v y λ.",
+    "fb_mal": "Error clásico: pensar que la frecuencia cambia con el medio. La fuente fija la frecuencia.",
+    "tip": "La frecuencia es una propiedad de la fuente, no del medio.",
+    "fuente": "PAES 2023"
   },
 
-  // ==================== SONIDO (10 preguntas) ====================
+  // ==================== SONIDO (10 preguntas estilo PAES) ====================
   {
-    "texto": "¿Por qué los astronautas no pueden escucharse directamente en el espacio?",
+    "texto": "¿Por qué en el espacio exterior los astronautas no pueden comunicarse directamente sin equipos de radio?",
     "formula": null,
-    "opciones": ["La temperatura es muy baja", "El sonido necesita medio material", "La gravedad es muy baja", "El sonido viaja más lento"],
+    "opciones": [
+      "Porque la temperatura es extremadamente baja",
+      "Porque el sonido es una onda mecánica y no hay medio material",
+      "Porque la gravedad es muy baja",
+      "Porque las ondas de radio viajan más lento que el sonido"
+    ],
     "correcta": 1,
     "label": "Naturaleza del sonido",
-    "fb_ok": "Correcto. El sonido es una onda mecánica que necesita un medio material.",
-    "fb_mal": "Incorrecto. En el vacío no hay partículas que vibren.",
-    "tip": "El sonido NO viaja en el vacío. La luz SÍ."
+    "fb_ok": "Correcto. El sonido necesita un medio material (sólido, líquido o gas) para propagarse. El espacio es vacío.",
+    "fb_mal": "Error: pensar que el frío o la gravedad afectan. El problema es la falta de medio material.",
+    "tip": "Sonido ≠ vacío. Luz = vacío.",
+    "fuente": "PAES 2023"
   },
   {
-    "texto": "¿En qué medio viaja más rápido el sonido?",
+    "texto": "El nivel de intensidad sonora en una discoteca es de 100 dB. Si se reduce la intensidad a la mitad, ¿cuál es aproximadamente el nuevo nivel?",
     "formula": null,
-    "opciones": ["Aire", "Agua", "Acero", "Helio"],
-    "correcta": 2,
-    "label": "Rapidez del sonido",
-    "fb_ok": "Correcto. v_sólidos > v_líquidos > v_gases.",
-    "fb_mal": "Incorrecto. Los sólidos son más rígidos → mayor velocidad.",
-    "tip": "Sólido > líquido > gas."
-  },
-  {
-    "texto": "Un murciélago emite 80.000 Hz. ¿Cómo se clasifica este sonido?",
-    "formula": null,
-    "opciones": ["Infrasonido", "Audible", "Ultrasonido", "Electromagnético"],
-    "correcta": 2,
-    "label": "Espectro sonoro",
-    "fb_ok": "Correcto. f > 20.000 Hz es ultrasonido.",
-    "fb_mal": "Incorrecto. Infrasonido < 20 Hz. Audible: 20-20.000 Hz. Ultrasonido > 20 kHz.",
-    "tip": "Infra (<20 Hz) → muy grave. Ultra (>20 kHz) → muy agudo (inaudible)."
-  },
-  {
-    "texto": "¿Qué característica permite distinguir una flauta de un violín con la misma nota y volumen?",
-    "formula": null,
-    "opciones": ["Tono", "Intensidad", "Timbre", "Frecuencia"],
-    "correcta": 2,
-    "label": "Tono, intensidad y timbre",
-    "fb_ok": "Correcto. El timbre es la 'personalidad' del sonido.",
-    "fb_mal": "Incorrecto. Misma f → mismo tono. Misma A → misma intensidad. Lo que cambia es el timbre.",
-    "tip": "Timbre = forma de onda = identifica el instrumento."
-  },
-  {
-    "texto": "Si el nivel de intensidad aumenta de 60 dB a 90 dB, ¿cuántas veces aumenta la intensidad física?",
-    "formula": null,
-    "opciones": ["3", "30", "100", "1000"],
-    "correcta": 3,
+    "opciones": ["50 dB", "97 dB", "99,7 dB", "90 dB"],
+    "correcta": 1,
     "label": "Decibeles",
-    "fb_ok": "Correcto. +30 dB = 10×10×10 = 1000 veces.",
-    "fb_mal": "Incorrecto. +10 dB = ×10. +20 dB = ×100. +30 dB = ×1000.",
-    "tip": "+10 dB → ×10. +20 dB → ×100. +30 dB → ×1000."
+    "fb_ok": "Correcto. Reducir a la mitad es una disminución de 3 dB aproximadamente. 100 - 3 = 97 dB.",
+    "fb_mal": "Error: pensar que la escala es lineal. La escala de decibeles es logarítmica.",
+    "tip": "Mitad de intensidad → -3 dB. Doble de intensidad → +3 dB.",
+    "fuente": "PAES 2024"
   },
   {
-    "texto": "¿Cuál es la diferencia entre eco y reverberación?",
+    "texto": "Un murciélago emite ultrasonido de 80.000 Hz para orientarse. ¿Qué característica tiene este sonido?",
     "formula": null,
-    "opciones": ["Uno en abierto, otro en cerrado", "Eco: reflejo separado; reverberación: reflejos fusionados", "Eco es más intenso", "Solo con sonidos agudos"],
+    "opciones": [
+      "Es infrasónico y audible para humanos",
+      "Es ultrasónico e inaudible para humanos",
+      "Tiene una longitud de onda mayor que el sonido audible",
+      "Viaja más lento que el sonido audible en el aire"
+    ],
     "correcta": 1,
-    "label": "Eco y reverberación",
-    "fb_ok": "Correcto. El eco se percibe separado (>0,1 s); la reverberación se fusiona.",
-    "fb_mal": "Incorrecto. Eco: distancia >17 m. Reverberación: sala de conciertos.",
-    "tip": "Eco: se escucha el rebote. Reverberación: sensación de 'espacio'."
+    "label": "Espectro sonoro",
+    "fb_ok": "Correcto. f > 20.000 Hz → ultrasonido, inaudible para humanos.",
+    "fb_mal": "Error: confundir ultrasonido (>20 kHz) con infrasonido (<20 Hz).",
+    "tip": "Ultrasonido: f > 20 kHz. Infrasonido: f < 20 Hz.",
+    "fuente": "PAES 2023"
   },
   {
-    "texto": "Una cantante rompe una copa con una nota aguda. ¿Qué fenómeno ocurre?",
+    "texto": "Una persona toca una nota LA (440 Hz) en un piano y luego en una guitarra. Ambas suenan con la misma intensidad. ¿Qué permite distinguir qué instrumento es cuál?",
     "formula": null,
-    "opciones": ["Doppler", "Eco", "Resonancia", "Refracción"],
+    "opciones": ["La frecuencia", "La amplitud", "El timbre", "La velocidad del sonido"],
     "correcta": 2,
-    "label": "Resonancia",
-    "fb_ok": "Correcto. La frecuencia coincide con la frecuencia natural de la copa.",
-    "fb_mal": "Incorrecto. Resonancia = coincidencia de frecuencias → amplitud crece.",
-    "tip": "Resonancia: la amplitud crece hasta romper."
+    "label": "Timbre",
+    "fb_ok": "Correcto. El timbre es la cualidad que permite distinguir instrumentos aunque toquen la misma nota con el mismo volumen.",
+    "fb_mal": "Error: pensar que la frecuencia o amplitud cambian. Misma nota → misma f. Mismo volumen → misma A.",
+    "tip": "Timbre = 'personalidad' del sonido (forma de onda).",
+    "fuente": "PAES 2024"
   },
   {
-    "texto": "Una ambulancia se mueve. ¿Cómo se comparan las frecuencias percibidas adelante y atrás?",
-    "formula": null,
-    "opciones": ["Ambas iguales, mayores", "Ambas iguales, menores", "Adelante mayor, atrás menor", "Adelante menor, atrás mayor"],
-    "correcta": 2,
-    "label": "Efecto Doppler",
-    "fb_ok": "Correcto. Adelante (acercamiento) → mayor f. Atrás (alejamiento) → menor f.",
-    "fb_mal": "Incorrecto. Acercamiento = agudo. Alejamiento = grave.",
-    "tip": "Adelante: más agudo. Atrás: más grave."
-  },
-  {
-    "texto": "Se ve un relámpago y 3 s después se escucha el trueno. ¿A qué distancia cayó el rayo? (v_sonido=340 m/s)",
+    "texto": "Un trueno se escucha 4 segundos después de ver el relámpago. Si la velocidad del sonido en el aire es 340 m/s, ¿a qué distancia cayó el rayo?",
     "formula": "d = v·t",
-    "opciones": ["340 m", "680 m", "1020 m", "1360 m"],
+    "opciones": ["85 m", "340 m", "680 m", "1360 m"],
+    "correcta": 3,
+    "label": "Rapidez del sonido",
+    "fb_ok": "Correcto. La luz llega casi instantáneamente. d = 340 m/s × 4 s = 1360 m.",
+    "fb_mal": "Error: olvidar que el retardo es solo del sonido. d = v·t.",
+    "tip": "Cada 3 segundos → aproximadamente 1 km.",
+    "fuente": ""
+  },
+  {
+    "texto": "¿En cuál de los siguientes medios viaja más rápido el sonido a 20°C?",
+    "formula": null,
+    "opciones": ["Aire", "Agua dulce", "Acero", "Helio"],
     "correcta": 2,
     "label": "Rapidez del sonido",
-    "fb_ok": "Correcto. d = 340 × 3 = 1020 m ≈ 1 km.",
-    "fb_mal": "Incorrecto. El retardo es solo del sonido. La luz llega casi instantánea.",
-    "tip": "Cada 3 segundos ≈ 1 km de distancia."
+    "fb_ok": "Correcto. v_sólidos > v_líquidos > v_gases. Acero ≈ 5000 m/s.",
+    "fb_mal": "Error: pensar que el sonido viaja más rápido en gases porque 'el aire es más liviano'.",
+    "tip": "Mayor rigidez del medio → mayor velocidad del sonido.",
+    "fuente": ""
   },
   {
-    "texto": "¿Qué tipo de onda es el sonido?",
+    "texto": "Una ambulancia se acerca a un observador con rapidez constante. ¿Cómo cambia la frecuencia percibida de su sirena?",
     "formula": null,
-    "opciones": ["EM transversal", "Mecánica longitudinal", "Mecánica transversal", "EM longitudinal"],
+    "opciones": [
+      "Es constante y mayor que la emitida",
+      "Es constante y menor que la emitida",
+      "Aumenta progresivamente",
+      "Disminuye progresivamente"
+    ],
+    "correcta": 0,
+    "label": "Efecto Doppler",
+    "fb_ok": "Correcto. Si la velocidad es constante, la frecuencia percibida es constante (pero mayor que la emitida).",
+    "fb_mal": "Error: pensar que la frecuencia aumenta progresivamente. Solo cambia si cambia la velocidad relativa.",
+    "tip": "Velocidad constante → frecuencia percibida constante (efecto Doppler estático).",
+    "fuente": "PAES 2023"
+  },
+  {
+    "texto": "Un sonido tiene un nivel de intensidad de 60 dB. ¿Cuántas veces mayor es su intensidad respecto al umbral de audición (0 dB)?",
+    "formula": null,
+    "opciones": ["60 veces", "10⁶ veces", "10⁶⁰ veces", "1000 veces"],
     "correcta": 1,
-    "label": "Naturaleza del sonido",
-    "fb_ok": "Correcto. Sonido = mecánica + longitudinal.",
-    "fb_mal": "Incorrecto. Sonido = mecánica (necesita medio) + longitudinal (vibración paralela).",
-    "tip": "Sonido: mecánica longitudinal. Luz: EM transversal."
+    "label": "Decibeles",
+    "fb_ok": "Correcto. Cada 10 dB multiplica la intensidad por 10. 60 dB = 10⁶ veces el umbral.",
+    "fb_mal": "Error: pensar linealmente. La escala es logarítmica base 10.",
+    "tip": "β (dB) = 10·log(I/I₀). I/I₀ = 10^(β/10).",
+    "fuente": "Preuniversitario UC"
+  },
+  {
+    "texto": "¿Qué fenómeno explica que una cantante pueda romper una copa de vidrio con su voz?",
+    "formula": null,
+    "opciones": ["Efecto Doppler", "Resonancia", "Refracción", "Difracción"],
+    "correcta": 1,
+    "label": "Resonancia",
+    "fb_ok": "Correcto. Cuando la frecuencia de la voz coincide con la frecuencia natural de la copa, se produce resonancia y la amplitud crece hasta romperla.",
+    "fb_mal": "Error: confundir con eco o Doppler. La resonancia es amplificación por coincidencia de frecuencias.",
+    "tip": "Resonancia = frecuencia de la fuerza = frecuencia natural del sistema.",
+    "fuente": "PAES 2023"
+  },
+  {
+    "texto": "Un sonido de 170 Hz viaja en el aire a 340 m/s. ¿Cuál es su longitud de onda?",
+    "formula": "λ = v/f",
+    "opciones": ["0,5 m", "1 m", "2 m", "4 m"],
+    "correcta": 2,
+    "label": "Ecuación v = λf",
+    "fb_ok": "Correcto. λ = 340/170 = 2 m.",
+    "fb_mal": "Error: invertir la fórmula (f/v).",
+    "tip": "λ = v/f. Sonido en aire: v ≈ 340 m/s.",
+    "fuente": ""
   }
 ];
+
 
 // ═══════════════════════════════════════════════════════════════
 // LÓGICA DEL CONTROL (NO MODIFICAR)
